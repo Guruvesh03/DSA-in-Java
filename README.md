@@ -1,79 +1,123 @@
-# DSA in Java
+# 🚀 DSA in Java
 
-A structured collection of Data Structures and Algorithms problems solved in Java.
+<div align="center">
 
-This repository is built as part of my journey to strengthen problem-solving skills, improve algorithmic thinking, and
-develop a solid understanding of core computer science concepts.
+### A structured repository for learning Data Structures & Algorithms using Java
 
-The project contains topic-wise implementations ranging from basic programming logic to advanced DSA concepts, with a
-focus on clean code, consistency, and logical understanding.
+<img src="https://img.shields.io/badge/Language-Java-orange?style=for-the-badge&logo=java" />
+<img src="https://img.shields.io/badge/IDE-IntelliJ_IDEA-black?style=for-the-badge&logo=intellijidea" />
+<img src="https://img.shields.io/badge/Focus-DSA-blue?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Status-Actively_Learning-success?style=for-the-badge" />
+
+</div>
 
 ---
 
-# Topics Covered
+# 📖 About This Repository
+
+This repository documents my journey of learning and practicing  
+**Data Structures and Algorithms in Java**.
+
+The goal of this project is to build strong problem-solving skills, improve algorithmic thinking, and develop a deep
+understanding of programming fundamentals through consistent practice.
+
+Instead of only collecting solutions, this repository focuses on:
+
+- Understanding the logic behind problems
+- Writing clean and readable code
+- Building strong DSA foundations
+- Tracking learning progress topic by topic
+
+---
+
+# 🧠 Topics Completed So Far
+
+## ✅ Core Programming & Logic Building
 
 - Pattern Printing
 - Arrays
+- 2D Arrays
 - Strings
-- Sorting Algorithms
-- Searching Algorithms
+- Bit Manipulation
+
+## ✅ Algorithms
+
+- Basic Sorting Algorithms
+
+---
+
+# 📌 Topics Planned for Future
+
 - Recursion
+- Backtracking
 - Linked Lists
 - Stacks
 - Queues
 - Trees
 - Graphs
 - Dynamic Programming
-- Object Oriented Programming
+- Greedy Algorithms
+- Hashing
 
 ---
 
-# Goals of This Repository
-
-- Improve problem-solving ability
-- Build strong DSA fundamentals
-- Practice clean and readable Java code
-- Prepare for coding interviews and technical assessments
-- Track daily learning progress
-
----
-
-# Technologies Used
-
-- Java
-- IntelliJ IDEA
-- Git
-- GitHub
-
----
-
-# Repository Structure
+# 🗂 Repository Structure
 
 ```text
 dsa-in-Java/
 │
 ├── DSAPatterns/
 ├── Arrays/
+├── TwoDArrays/
 ├── Strings/
+├── BitManipulation/
 ├── Sorting/
-├── Recursion/
 └── README.md
 ```
 
 ---
 
-# Learning Approach
+# 🎯 Learning Goals
 
-Each problem is solved with emphasis on:
-
-- Logic building
-- Time and space complexity awareness
-- Code readability
-- Step-by-step understanding
-- Real understanding instead of memorization
+✅ Improve coding logic and analytical thinking  
+✅ Build strong DSA fundamentals  
+✅ Understand time and space complexity  
+✅ Develop consistency in problem solving  
+✅ Prepare for coding interviews and technical assessments
 
 ---
 
-# Author
+# ⚙️ Technologies Used
 
-This repository is maintained as part of my Data Structures and Algorithms learning journey using Java.
+| Technology    | Purpose                   |
+|---------------|---------------------------|
+| Java          | Core programming language |
+| IntelliJ IDEA | Development environment   |
+| Git           | Version control           |
+| GitHub        | Repository hosting        |
+
+---
+
+# 📚 Learning Philosophy
+
+This repository emphasizes:
+
+- Learning concepts deeply
+- Practicing consistently
+- Building logic instead of memorizing solutions
+- Writing maintainable and understandable code
+
+Every solved problem is another step in strengthening computational thinking and software development skills ⚙️
+
+---
+
+# 🌱 Current Status
+
+📌 Actively learning and updating regularly.
+
+---
+
+# 👨‍💻 Author
+
+Maintained as part of my ongoing journey to improve in  
+**Data Structures, Algorithms, and Software Development using Java.**
