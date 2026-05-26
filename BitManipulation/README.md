@@ -631,7 +631,152 @@ a =a ^b;
 
 ## 💡 Intuition
 
-XOR cancels duplicate values.
+XOR has a magical cancelation property:
+
+```java
+x ^x =0
+x ^0=x
+```
+
+Using this, we temporarily hide both values inside XOR operations and then recover them in reverse order without using
+any extra variable.
+
+Think of XOR like a reversible binary locker 🔐
+
+---
+
+## 🧠 How It Works
+
+### Initial Values
+
+```text
+a = 5
+b = 3
+```
+
+---
+
+### Step 1️⃣
+
+```java
+a =a ^b;
+```
+
+Now:
+
+```text
+a = 6
+b = 3
+```
+
+`a` stores the XOR combination of both numbers.
+
+---
+
+### Step 2️⃣
+
+```java
+b =a ^b;
+```
+
+Now:
+
+```text
+a = 6
+b = 5
+```
+
+Original value of `a` is restored into `b`.
+
+---
+
+### Step 3️⃣
+
+```java
+a =a ^b;
+```
+
+Now:
+
+```text
+a = 3
+b = 5
+```
+
+Original value of `b` is restored into `a`.
+
+✅ Numbers swapped successfully.
+
+---
+
+## ❌ Mistake I Made Initially
+
+### Wrong Logic
+
+```java
+a =a ^a ^b;
+b =b ^b ^a;
+```
+
+---
+
+## 🚫 Why It Failed
+
+Since:
+
+```java
+x ^x =0
+```
+
+The first statement becomes:
+
+```java
+a =0^b;
+a =b;
+```
+
+The original value of `a` gets destroyed immediately.
+
+Then the second statement also fails because both variables start becoming the same value.
+
+### Example
+
+```text
+Initial:
+a = 5
+b = 3
+```
+
+After wrong logic:
+
+```text
+a = 3
+b = 3
+```
+
+❌ Swapping does not happen.
+
+---
+
+## ⏱️ Complexity
+
+| Complexity       | Value  |
+|------------------|--------|
+| Time Complexity  | `O(1)` |
+| Space Complexity | `O(1)` |
+
+---
+
+## 📌 Important Note
+
+Although XOR swap is a famous bit manipulation trick, real-world code usually prefers using a temporary variable because
+it is easier to read and debug.
+
+```java
+int temp = a;
+a =b;
+b =temp;
+```
 
 ---
 
