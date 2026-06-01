@@ -903,3 +903,13 @@ They are about recognizing patterns:
 - Coordinate Transformation
 
 Master these patterns and most beginner-to-intermediate matrix problems become significantly easier.
+
+## 🗺️ Pattern Map
+
+| Problem              | Pattern                   |
+|----------------------|---------------------------|
+| Count of Numbers     | Complete Traversal        |
+| Sum of Rows          | Row Traversal             |
+| Diagonal Sum         | Diagonal Traversal        |
+| Sorted Matrix Search | Staircase Search          |
+| Transpose Matrix     | Coordinate Transformation |
