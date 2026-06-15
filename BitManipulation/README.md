@@ -215,55 +215,166 @@ Flips all bits.
 
 ---
 
+## 🔄 Shift Operators
+
+Shift operators move the bits of a number left or right. Since binary positions represent powers of 2, shifting bits can
+efficiently perform multiplication and division.
+
+---
+
 ## Left Shift `<<`
 
-Shifts bits to the left.
+Moves all bits to the left by a specified number of positions.
 
 ### Formula
 
 ```text
-x << 1 = x * 2
+x << n = x × 2ⁿ
 ```
 
 ### Example
 
 ```text
-5 = 0101
-5 << 1 = 1010 = 10
+5 = 00000101
+
+5 << 1
+
+00000101
+↓
+00001010
+
+= 10
+```
+
+### More Examples
+
+```text
+7 << 1 = 14
+7 << 2 = 28
+7 << 3 = 56
+```
+
+### Key Points
+
+- Bits move towards the left.
+- Empty positions on the right are filled with `0`.
+- Leftmost bits that go beyond the available space are discarded.
+- Each left shift doubles the value.
+
+```text
+x << 1 = x × 2
+x << 2 = x × 4
+x << 3 = x × 8
 ```
 
 ---
 
 ## Right Shift `>>`
 
-Shifts bits to the right.
+Moves all bits to the right by a specified number of positions.
 
 ### Formula
 
 ```text
-x >> 1 = x / 2
+x >> n = x ÷ 2ⁿ
 ```
 
 ### Example
 
 ```text
-8 = 1000
-8 >> 1 = 0100 = 4
+8 = 00001000
+
+8 >> 1
+
+00001000
+↓
+00000100
+
+= 4
 ```
+
+### More Examples
+
+```text
+20 >> 1 = 10
+20 >> 2 = 5
+```
+
+### Key Points
+
+- Bits move towards the right.
+- Rightmost bits are discarded.
+- Each right shift halves the value.
+- Performs integer division, so decimal values are lost.
+
+```text
+13 >> 1 = 6
+
+13 / 2 = 6.5
+```
+
+The `.5` is discarded because bits cannot store fractional parts in integer representation.
 
 ---
 
+## Creating Bit Masks
+
+A very common use of left shift is creating masks.
+
+### Formula
+
+```java
+1<<i
+```
+
+### Examples
+
+```text
+1 << 0 = 0001
+1 << 1 = 0010
+1 << 2 = 0100
+1 << 3 = 1000
+```
+
+Only the `iᵗʰ` bit is set to `1`.
+
+---
+
+## Quick Comparison
+
+| Operator | Meaning         | Formula          |
+|----------|-----------------|------------------|
+| `x << n` | Move bits left  | `x × 2ⁿ`         |
+| `x >> n` | Move bits right | `x ÷ 2ⁿ`         |
+| `1 << i` | Create mask     | Set only ith bit |
+
+---
+
+## 🧠 Memory Trick
+
+```text
+Left Shift  (<<)
+⬅ Move Left
+⬆ Value Increases
+× 2ⁿ
+
+Right Shift (>>)
+➡ Move Right
+⬇ Value Decreases
+÷ 2ⁿ
+```
+
 # 🧠 Important Bit Tricks
 
-| Trick              | Purpose             |             |
-|--------------------|---------------------|-------------|
-| `n & 1`            | Odd / Even          |             |
-| `1 << i`           | Create mask         |             |
-| `n                 | mask`               | Set ith bit |
-| `n & ~mask`        | Clear ith bit       |             |
-| `n ^ mask`         | Toggle ith bit      |             |
-| `n & (n - 1)`      | Remove last set bit |             |
-| `n & (n - 1) == 0` | Power of 2          |             |
+| Trick                | Purpose             |
+|----------------------|---------------------|
+| `n & 1`              | Check Odd / Even    |
+| `1 << i`             | Create bit mask     |
+| `n \| mask`          | Set ith bit         |
+| `n & ~mask`          | Clear ith bit       |
+| `n ^ mask`           | Toggle ith bit      |
+| `n & (n - 1)`        | Remove last set bit |
+| `(n & (n - 1)) == 0` | Check Power of 2    |
 
 ---
 
