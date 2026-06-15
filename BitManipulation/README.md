@@ -176,34 +176,292 @@ Mainly used for:
 
 ---
 
-## XOR Operator `^`
+## XOR `^`
 
-Returns 1 when bits are different.
+XOR (Exclusive OR) compares two bits and returns `1` only when the bits are different.
+
+---
+
+## XOR Truth Table
+
+| A | B | A ^ B |
+|---|---|-------|
+| 0 | 0 | 0     |
+| 0 | 1 | 1     |
+| 1 | 0 | 1     |
+| 1 | 1 | 0     |
+
+### Rule
 
 ```text
-1 ^ 1 = 0
-1 ^ 0 = 1
-0 ^ 1 = 1
-0 ^ 0 = 0
+Same Bits      → 0
+Different Bits → 1
+```
+
+---
+
+## Example
+
+```text
+5 = 0101
+3 = 0011
+
+5 ^ 3
+
+0101
+0011
+----
+0110
+
+= 6
+```
+
+---
+
+## Why XOR is Special
+
+Unlike AND and OR, XOR has several unique properties that make it extremely useful in DSA, Competitive Programming, and
+Bit Manipulation.
+
+---
+
+## Property 1: Same Numbers Cancel Out
+
+```text
+a ^ a = 0
 ```
 
 ### Example
 
 ```text
-5 = 0101
-3 = 0011
-------------
-    0110
+5 ^ 5
+
+0101
+0101
+----
+0000
+
+= 0
 ```
 
-Mainly used for:
-
-* toggling
-* unique element problems
-* swapping
-* cancellation logic
+Since every bit is identical, all bits become `0`.
 
 ---
+
+## Property 2: XOR with 0 Returns the Same Number
+
+```text
+a ^ 0 = a
+```
+
+### Example
+
+```text
+5 ^ 0
+
+0101
+0000
+----
+0101
+
+= 5
+```
+
+Zero does not affect the value.
+
+---
+
+## Property 3: Reversible Operation
+
+```text
+(a ^ b) ^ b = a
+```
+
+### Example
+
+```text
+5 ^ 3 = 6
+
+6 ^ 3 = 5
+```
+
+The second XOR cancels the first one.
+
+This property is the foundation of XOR-based swapping and many advanced algorithms.
+
+---
+
+## Property 4: Order Doesn't Matter
+
+```text
+a ^ b = b ^ a
+```
+
+### Example
+
+```text
+5 ^ 3 = 6
+3 ^ 5 = 6
+```
+
+This property is called **Commutativity**.
+
+---
+
+## Property 5: Grouping Doesn't Matter
+
+```text
+(a ^ b) ^ c = a ^ (b ^ c)
+```
+
+### Example
+
+```text
+(2 ^ 3) ^ 4
+=
+2 ^ (3 ^ 4)
+```
+
+This property is called **Associativity**.
+
+---
+
+## XOR for Toggling Bits
+
+XOR can flip a bit.
+
+### Example
+
+```text
+Bit = 1
+
+1 ^ 1 = 0
+```
+
+```text
+Bit = 0
+
+0 ^ 1 = 1
+```
+
+A bit XORed with `1` always changes its state.
+
+---
+
+## Toggle ith Bit
+
+### Formula
+
+```java
+n ^(1<<i)
+```
+
+### Example
+
+```text
+n = 10
+
+1010
+
+Toggle bit at index 1
+
+Mask = 0010
+
+1010
+0010
+----
+1000
+
+= 8
+```
+
+---
+
+## Finding a Unique Element
+
+When every element appears twice except one:
+
+```text
+2 3 4 3 2
+```
+
+Using XOR:
+
+```text
+2 ^ 3 ^ 4 ^ 3 ^ 2
+
+= (2 ^ 2) ^ (3 ^ 3) ^ 4
+
+= 0 ^ 0 ^ 4
+
+= 4
+```
+
+### Result
+
+```text
+Unique Element = 4
+```
+
+This is one of the most common interview questions.
+
+---
+
+## Swapping Two Numbers Using XOR
+
+### Logic
+
+```java
+a =a ^b;
+b =a ^b;
+a =a ^b;
+```
+
+### Example
+
+```text
+a = 5
+b = 3
+
+After swapping:
+
+a = 3
+b = 5
+```
+
+---
+
+## Quick Comparison
+
+| Expression     | Result                     |
+|----------------|----------------------------|
+| `a ^ a`        | `0`                        |
+| `a ^ 0`        | `a`                        |
+| `(a ^ b) ^ b`  | `a`                        |
+| `a ^ b`        | Set bits where bits differ |
+| `n ^ (1 << i)` | Toggle ith bit             |
+
+---
+
+## 🧠 Memory Trick
+
+```text
+XOR = Difference Detector
+
+Same Bits      → 0
+Different Bits → 1
+
+a ^ a = 0
+a ^ 0 = a
+
+XOR Cancels Duplicates
+```
+
+### One-Line Summary
+
+```text
+XOR returns 1 for different bits and 0 for same bits, making it perfect for toggling bits, finding unique elements, and cancelling duplicate values.
+```
 
 ## NOT Operator `~`
 
