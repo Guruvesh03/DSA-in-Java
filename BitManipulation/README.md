@@ -118,16 +118,14 @@ MSB
 
 # ⚙️ Bitwise Operators Cheatsheet
 
-| Operator | Name        | Purpose                 |              |
-|----------|-------------|-------------------------|--------------|
-| `&`      | AND         | Checking bits           |              |
-| `        | `           | OR                      | Setting bits |
-| `^`      | XOR         | Toggling / cancellation |              |
-| `~`      | NOT         | Inverting bits          |              |
-| `<<`     | Left Shift  | Multiply by 2           |              |
-| `>>`     | Right Shift | Divide by 2             |              |
-
----
+| Operator | Name        | Purpose                 |
+|----------|-------------|-------------------------|
+| `&`      | AND         | Checking bits           |
+| `\|`     | OR          | Setting bits            |
+| `^`      | XOR         | Toggling / Cancellation |
+| `~`      | NOT         | Inverting bits          |
+| `<<`     | Left Shift  | Multiply by 2           |
+| `>>`     | Right Shift | Divide by 2             |
 
 # 🔍 Understanding Operators
 
