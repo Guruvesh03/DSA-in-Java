@@ -127,6 +127,461 @@ MSB
 | `<<`     | Left Shift  | Multiply by 2           |
 | `>>`     | Right Shift | Divide by 2             |
 
+---
+
+# Integer Overflow and Wrap Around using Bits
+
+## 📌 Problem
+
+Why does storing a value outside the range of a data type produce unexpected results?
+
+Example:
+
+```java
+byte x = (byte)129;
+System.out.println(x);
+```
+
+Output:
+
+```text
+-127
+```
+
+Why does `129` become `-127`?
+
+---
+
+## ⚡ Golden Trick
+
+A computer stores numbers using a **fixed number of bits**.
+
+For an 8-bit signed byte:
+
+```text
+Range = -128 to 127
+```
+
+Only **256 unique bit patterns** are possible:
+
+```text
+2^8 = 256
+```
+
+When a value exceeds the maximum range, the extra carry bit is discarded and the value **wraps around**.
+
+Think of it like a clock:
+
+```text
+11 + 1 = 12
+12 + 1 = 1
+```
+
+Similarly:
+
+```text
+127 + 1 = -128
+```
+
+---
+
+## 💻 Code
+
+```java
+public class Main {
+    public static void main(String[] args) {
+
+        byte a = 127;
+        a++;
+
+        System.out.println(a);
+
+        byte b = (byte)129;
+        System.out.println(b);
+    }
+}
+```
+
+Output:
+
+```text
+-128
+-127
+```
+
+---
+
+## 🧠 Intuition
+
+Computers do not store numbers directly.
+
+They store only **bits**.
+
+For example:
+
+```text
+127 = 01111111
+```
+
+When we add 1:
+
+```text
+01111111
++       1
+---------
+10000000
+```
+
+The result becomes:
+
+```text
+10000000
+```
+
+In Two's Complement representation:
+
+```text
+10000000 = -128
+```
+
+Therefore:
+
+```text
+127 + 1 = -128
+```
+
+The number wraps around because there is no ninth bit available.
+
+---
+
+## 🪄 Dry Run
+
+### Example 1: 127 + 1
+
+Step 1:
+
+```text
+127 = 01111111
+```
+
+Step 2:
+
+```text
+01111111
++00000001
+---------
+10000000
+```
+
+Step 3:
+
+Interpret result as signed byte:
+
+```text
+10000000 = -128
+```
+
+Final Answer:
+
+```text
+127 + 1 = -128
+```
+
+---
+
+### Example 2: Storing 129
+
+Binary representation:
+
+```text
+129 = 10000001
+```
+
+Stored bits:
+
+```text
+10000001
+```
+
+Since the first bit is 1, it is interpreted as a negative number.
+
+Using Two's Complement:
+
+Invert bits:
+
+```text
+01111110
+```
+
+Add 1:
+
+```text
+01111111
+```
+
+Value:
+
+```text
+127
+```
+
+Therefore:
+
+```text
+10000001 = -127
+```
+
+Final Answer:
+
+```text
+129 becomes -127
+```
+
+---
+
+## ❌ Counter Example
+
+### Unsigned Byte
+
+If the byte were unsigned:
+
+```text
+10000001
+```
+
+would be:
+
+```text
+128 + 1 = 129
+```
+
+Result:
+
+```text
+129
+```
+
+No negative value appears.
+
+The same bits can represent different values depending on how they are interpreted.
+
+---
+
+## 🔥 Why It Works
+
+### Fixed Bit Storage
+
+An 8-bit number can store only:
+
+```text
+00000000
+to
+11111111
+```
+
+Total combinations:
+
+```text
+256
+```
+
+The CPU cannot magically create extra bits.
+
+When overflow occurs:
+
+```text
+11111111 + 1
+```
+
+becomes:
+
+```text
+1 00000000
+```
+
+The extra carry:
+
+```text
+1
+```
+
+is discarded.
+
+Only:
+
+```text
+00000000
+```
+
+remains.
+
+This causes the value to wrap around.
+
+---
+
+### Two's Complement Representation
+
+Signed integers use Two's Complement.
+
+Positive numbers:
+
+```text
+00000000 = 0
+00000001 = 1
+...
+01111111 = 127
+```
+
+Negative numbers:
+
+```text
+11111111 = -1
+11111110 = -2
+...
+10000000 = -128
+```
+
+This allows addition and subtraction to work using the same hardware circuitry.
+
+---
+
+## ⚠️ Edge Cases
+
+### Maximum Positive Value
+
+```text
+127 + 1 = -128
+```
+
+---
+
+### Minimum Negative Value
+
+```text
+-128 - 1 = 127
+```
+
+Binary:
+
+```text
+10000000
+-       1
+---------
+01111111
+```
+
+Result:
+
+```text
+127
+```
+
+---
+
+### Large Positive Numbers
+
+```text
+(byte)130 = -126
+(byte)131 = -125
+(byte)132 = -124
+```
+
+---
+
+### Large Negative Numbers
+
+```text
+(byte)-129 = 127
+(byte)-130 = 126
+```
+
+---
+
+## ⏱️ Complexity
+
+Time Complexity:
+
+```text
+O(1)
+```
+
+Space Complexity:
+
+```text
+O(1)
+```
+
+Since overflow handling is performed directly by hardware.
+
+---
+
+## 🎓 Interview Takeaway
+
+Interview Question:
+
+> Why does 127 + 1 become -128 in Java byte?
+
+Answer:
+
+```text
+A byte uses 8 bits and follows Two's Complement representation.
+
+127 is stored as:
+
+01111111
+
+Adding 1 produces:
+
+10000000
+
+which represents -128.
+
+The overflow occurs because the carry bit is discarded due to the fixed 8-bit storage.
+```
+
+---
+
+## 🧩 Memory Trick
+
+Imagine an 8-bit signed integer as a circular wheel:
+
+```text
+... -3
+... -2
+... -1
+0
+1
+2
+...
+126
+127
+↓
+-128
+↓
+-127
+...
+```
+
+After reaching the maximum value:
+
+```text
+127
+```
+
+the next value becomes:
+
+```text
+-128
+```
+
+because the bit pattern wraps around.
+
+### One-Line Rule
+
+```text
+Integer Overflow = Fixed Number of Bits + Extra Carry Bit Discarded
+```
+
 # 🔍 Understanding Operators
 
 ## AND Operator `&`
