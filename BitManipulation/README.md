@@ -895,38 +895,297 @@ int mask = a | b;
 
 ## 📌 Problem
 
-Determine whether a number is power of 2.
+Determine whether a given number is a Power of 2.
 
 ---
 
 ## ⚡ Golden Trick
 
 ```java
-n &(n -1)
+(n &(n -1))==0
 ```
+
+---
+
+## 💻 Java Function
+
+```java
+public static boolean isPowerOfTwo(int n) {
+    return n > 0 && (n & (n - 1)) == 0;
+}
+```
+
+---
+
+## 🧠 Key Observation
+
+A Power of 2 always contains **exactly one Set Bit**.
+
+### Examples
+
+```text
+1  = 0001
+2  = 0010
+4  = 0100
+8  = 1000
+16 = 10000
+32 = 100000
+```
+
+Notice that every number has only **one `1`** in its binary representation.
+
+---
+
+## 🔍 What is a Set Bit?
+
+A bit whose value is **1** is called a **Set Bit**.
+
+### Example
+
+```text
+13 = 1101
+```
+
+```text
+1 1 0 1
+↑ ↑   ↑
+```
+
+Number of Set Bits = **3**
 
 ---
 
 ## 💡 Intuition
 
-Power of 2 has only one set bit.
+When we subtract `1` from a number:
+
+- The rightmost Set Bit becomes `0`
+- All bits to its right become `1`
+
+For a Power of 2, there is only one Set Bit.
+
+So subtracting `1` completely removes that Set Bit.
 
 ---
 
-## 🧠 Logic
+## 🪄 Dry Run
 
-Subtracting 1 removes the only set bit.
+### Example: n = 8
 
----
-
-## 🪄 Example
+Binary Representation:
 
 ```text
-8  = 1000
-7  = 0111
--------------
-     0000
+8 = 1000
 ```
+
+Subtract 1:
+
+```text
+7 = 0111
+```
+
+Perform AND Operation:
+
+```text
+1000
+0111
+----
+0000
+```
+
+Result = **0** ✅
+
+Therefore, **8 is a Power of 2**.
+
+---
+
+## 🎯 Another Example
+
+### Example: n = 16
+
+```text
+16 = 10000
+15 = 01111
+```
+
+```text
+10000
+01111
+-----
+00000
+```
+
+Result = **0** ✅
+
+Therefore, **16 is a Power of 2**.
+
+---
+
+## ❌ Non-Power of 2 Example
+
+### Example: n = 10
+
+```text
+10 = 1010
+ 9 = 1001
+```
+
+```text
+1010
+1001
+----
+1000
+```
+
+Result ≠ **0**
+
+Therefore, **10 is NOT a Power of 2**.
+
+---
+
+## 🔥 Why Does This Work?
+
+The expression:
+
+```java
+n &(n -1)
+```
+
+always removes the **rightmost Set Bit** from a number.
+
+### Example
+
+```text
+12 = 1100
+11 = 1011
+```
+
+```text
+1100
+1011
+----
+1000
+```
+
+The rightmost Set Bit is removed.
+
+For a Power of 2, there is only one Set Bit.
+
+Removing it leaves:
+
+```text
+0000
+```
+
+Hence:
+
+```java
+(n &(n -1))==0
+```
+
+---
+
+## ⚠️ Important Edge Case
+
+### What about 0?
+
+```java
+0&(-1)=0
+```
+
+But:
+
+```text
+0 is NOT a Power of 2
+```
+
+That's why we add:
+
+```java
+n >0
+```
+
+Final Condition:
+
+```java
+n >0&&(n &(n -1))==0
+```
+
+---
+
+## ⏱️ Complexity Analysis
+
+### Time Complexity
+
+```text
+O(1)
+```
+
+Only one bitwise operation is performed.
+
+### Space Complexity
+
+```text
+O(1)
+```
+
+No extra memory is used.
+
+---
+
+## 🎓 Interview Takeaway
+
+```text
+Power of 2 → Exactly One Set Bit
+
+n & (n - 1) = 0
+```
+
+### Quick Examples
+
+```text
+1   ✅
+2   ✅
+4   ✅
+8   ✅
+16  ✅
+32  ✅
+
+3   ❌
+5   ❌
+10  ❌
+12  ❌
+18  ❌
+```
+
+---
+
+## 🧩 Memory Trick
+
+Imagine a Power of 2 as a room with only **one light turned on**.
+
+```text
+1000
+```
+
+Subtracting `1` turns that light off and switches all lower lights on.
+
+```text
+0111
+```
+
+Now there is no position where both numbers have a `1`.
+
+```text
+1000
+0111
+----
+0000
+```
+
+Result = **0**
+
+Therefore, the number is a Power of 2. 🚀
 
 ---
 
