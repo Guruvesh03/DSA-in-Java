@@ -1194,32 +1194,274 @@ Bit is set.
 
 ---
 
-# 3️⃣ Set ith Bit
+# 3️⃣ Set Kth Bit
 
-## 📌 Problem
+# 📌 Problem: Set the K-th Bit
 
-Set the ith bit to 1.
+Given an integer `n` and a bit position `k`, set the K-th bit of the number and return the resulting value.
 
 ---
 
-## ⚡ Trick Used
+# ⚡ Golden Trick
+
+Use the bitwise OR operator with a mask containing only the K-th bit set.
 
 ```java
-n |(1<<i)
+n |(1<<k)
+```
+
+The OR operation guarantees that the K-th bit becomes `1`, regardless of its previous value.
+
+---
+
+# 🧠 Intuition
+
+To set a specific bit, we first create a mask:
+
+```java
+1<<k
+```
+
+This shifts `1` to the K-th position.
+
+For example:
+
+```text
+k = 3
+
+0001 << 3 = 1000
+```
+
+Now perform OR:
+
+```text
+n | mask
+```
+
+Since:
+
+```text
+0 | 1 = 1
+1 | 1 = 1
+```
+
+the K-th bit is guaranteed to become `1`.
+
+---
+
+# 🪄 Dry Run
+
+### Input
+
+```text
+n = 10
+k = 0
+```
+
+Binary representation:
+
+```text
+10 = 1010
+```
+
+### Step 1: Create Mask
+
+```text
+1 << 0 = 0001
+```
+
+### Step 2: Apply OR
+
+```text
+1010
+0001
+----
+1011
+```
+
+### Result
+
+```text
+11
 ```
 
 ---
 
-## 💡 Intuition
+# ❌ Counter Example
 
-OR with 1 always sets the bit.
+Suppose the bit is already set.
+
+### Input
+
+```text
+n = 13
+k = 2
+```
+
+Binary:
+
+```text
+13 = 1101
+```
+
+Mask:
+
+```text
+0100
+```
+
+Apply OR:
+
+```text
+1101
+0100
+----
+1101
+```
+
+Result:
+
+```text
+13
+```
+
+The number remains unchanged because the bit was already set.
 
 ---
 
-## 🧠 Logic
+# 🔥 Why It Works
 
-The mask contains 1 only at the required position.
+The mask contains exactly one bit set:
 
+```text
+0001 << k
+```
+
+When OR is applied:
+
+```text
+n | mask
+```
+
+only the K-th position is affected.
+
+For the target bit:
+
+```text
+0 | 1 = 1
+1 | 1 = 1
+```
+
+Therefore, the K-th bit always becomes `1`.
+
+All other bits remain unchanged.
+
+---
+
+# ⚠️ Edge Cases
+
+### 1. Bit Already Set
+
+```text
+n = 13
+k = 2
+```
+
+Result remains:
+
+```text
+13
+```
+
+---
+
+### 2. Number is Zero
+
+```text
+n = 0
+k = 3
+```
+
+```text
+0000 | 1000 = 1000
+```
+
+Result:
+
+```text
+8
+```
+
+---
+
+### 3. Setting the 0th Bit
+
+```text
+n = 10
+k = 0
+```
+
+```text
+1010 | 0001 = 1011
+```
+
+Result:
+
+```text
+11
+```
+
+---
+
+# ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+# 🎓 Interview Takeaway
+
+Whenever you need to force a bit to become `1`, use:
+
+```java
+n |(1<<k)
+```
+
+This is the standard and most efficient approach used in bit manipulation problems.
+
+---
+
+# 🧩 Memory Trick
+
+Think of OR as a permanent marker 🖊️.
+
+If you draw a `1` over a bit:
+
+```text
+0 → 1
+1 → 1
+```
+
+it always stays `1`.
+
+So remember:
+
+```text
+Set Bit
+=
+OR with Shifted 1
+```
+
+```java
+n |(1<<k)
+```
+
+Whenever you hear **"set the K-th bit"**, your brain should immediately think:
+
+👉 **OR + Shifted 1**
 ---
 
 # 4️⃣ Clear ith Bit
