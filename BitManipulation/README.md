@@ -138,8 +138,10 @@ Why does storing a value outside the range of a data type produce unexpected res
 Example:
 
 ```java
-byte x = (byte)129;
-System.out.println(x);
+byte x = (byte) 129;
+System.out.
+
+println(x);
 ```
 
 Output:
@@ -196,7 +198,7 @@ public class Main {
 
         System.out.println(a);
 
-        byte b = (byte)129;
+        byte b = (byte) 129;
         System.out.println(b);
     }
 }
@@ -1909,10 +1911,266 @@ Subtracting 1 flips bits after the last set bit.
 
 # 1️⃣5️⃣ Check kth Bit Set or Not
 
-## ⚡ Logic
+# 📌 Problem: Check Whether the K-th Bit is Set
+
+Given an integer `n` and a bit position `k`, determine whether the K-th bit of the number is set (`1`) or not set (`0`).
+
+---
+
+# ⚡ Golden Trick
+
+Create a mask having only the K-th bit set.
+
+```java
+1<<k
+```
+
+Then perform a bitwise AND operation:
+
+```java
+n &(1<<k)
+```
+
+- Result = `0` → K-th bit is NOT set
+- Result ≠ `0` → K-th bit IS set
+
+---
+
+# 🧠 Intuition
+
+Imagine each bit of a number is a switch.
+
+For example:
+
+```text
+13 = 1101
+```
+
+```text
+Position: 3 2 1 0
+Bits:     1 1 0 1
+```
+
+To check a specific switch, we create a mask that turns ON only that position.
+
+For K = 2:
+
+```text
+0001 << 2 = 0100
+```
+
+Now perform AND:
+
+```text
+1101
+0100
+----
+0100
+```
+
+Since the result is not zero, the bit exists and is set.
+
+---
+
+# 🪄 Dry Run
+
+### Input
+
+```text
+n = 13
+k = 2
+```
+
+### Step 1
+
+Create mask:
+
+```text
+1 << 2 = 0100
+```
+
+### Step 2
+
+Perform AND:
+
+```text
+1101
+0100
+----
+0100
+```
+
+### Step 3
+
+Result ≠ 0
+
+```text
+Answer = Set
+```
+
+---
+
+# ❌ Counter Example
+
+### Input
+
+```text
+n = 13
+k = 1
+```
+
+Binary:
+
+```text
+13 = 1101
+```
+
+Mask:
+
+```text
+0010
+```
+
+AND:
+
+```text
+1101
+0010
+----
+0000
+```
+
+Result = 0
+
+```text
+Answer = Not Set
+```
+
+---
+
+# 🔥 Why It Works
+
+The mask contains exactly one bit set:
+
+```text
+0001 << k
+```
+
+When AND is performed:
+
+```text
+n & mask
+```
+
+all bits become zero except the K-th bit.
+
+Therefore:
+
+- If K-th bit was 1 → result is non-zero.
+- If K-th bit was 0 → result is zero.
+
+This directly tells us whether the bit is set.
+
+---
+
+# ⚠️ Edge Cases
+
+### 1. Checking 0th Bit
+
+```text
+n = 5 (0101)
+k = 0
+```
+
+Result:
+
+```text
+Set
+```
+
+---
+
+### 2. Number is Zero
+
+```text
+n = 0
+```
+
+Every bit is unset.
+
+Result:
+
+```text
+Not Set
+```
+
+---
+
+### 3. Large Bit Position
+
+```text
+k >= 31
+```
+
+For Java `int`, valid positions are typically:
+
+```text
+0 to 31
+```
+
+---
+
+# ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+# 🎓 Interview Takeaway
+
+Whenever you need to inspect a specific bit:
 
 ```java
 (n &(1<<k))!=0
+```
+
+This is the most common and efficient technique used in bit manipulation problems.
+
+---
+
+# 🧩 Memory Trick
+
+Think of the mask as a spotlight 🔦.
+
+```java
+1<<k
+```
+
+moves the spotlight to the K-th position.
+
+```java
+n &mask
+```
+
+illuminates only that bit.
+
+- Light visible → Bit is Set ✅
+- No light → Bit is Not Set ❌
+
+Remember:
+
+```java
+Check Bit
+        =
+        AND
+with Shifted 1
+```
+
+```java
+(n &(1<<k))
 ```
 
 ---
