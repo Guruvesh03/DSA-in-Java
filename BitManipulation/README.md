@@ -1464,31 +1464,413 @@ Whenever you hear **"set the K-th bit"**, your brain should immediately think:
 👉 **OR + Shifted 1**
 ---
 
-# 4️⃣ Clear ith Bit
+# 4️⃣ Clear kth Bit
 
-## 📌 Problem
+# 📌 Problem: Clear the K-th Bit
 
-Clear the ith bit.
+Given an integer `n` and a bit position `k`, clear the K-th bit of the number and return the resulting value.
+
+Clearing a bit means forcing it to become `0` regardless of its current value.
 
 ---
 
-## ⚡ Trick Used
+# ⚡ Golden Trick
+
+Create a mask with only the K-th bit set:
 
 ```java
-n &~(1<<i)
+1<<k
+```
+
+Invert the mask:
+
+```java
+~(1<<k)
+```
+
+Then perform AND with the original number:
+
+```java
+n &~(1<<k)
+```
+
+This clears the K-th bit while leaving all other bits unchanged.
+
+---
+
+# 🧠 Intuition
+
+To clear a bit, we need a mask that contains:
+
+```text
+1 everywhere
+0 at the K-th position
+```
+
+Example:
+
+```text
+k = 2
+
+1 << 2 = 0100
+```
+
+Invert it:
+
+```text
+1011
+```
+
+Now perform AND:
+
+```text
+1101
+1011
+----
+1001
+```
+
+The K-th bit becomes `0`.
+
+---
+
+# 🪄 Dry Run
+
+### Input
+
+```text
+n = 13
+k = 2
+```
+
+Binary representation:
+
+```text
+13 = 1101
+```
+
+### Step 1: Create Mask
+
+```text
+1 << 2 = 0100
+```
+
+### Step 2: Invert Mask
+
+```text
+~0100 = 1011
+```
+
+### Step 3: Apply AND
+
+```text
+1101
+1011
+----
+1001
+```
+
+### Result
+
+```text
+9
 ```
 
 ---
 
-## 💡 Intuition
+# ❌ Common Mistake I Made
 
-Create a mask having 0 only at the ith position.
+Initially, I used:
+
+```java
+n |~(1<<k)
+```
+
+instead of:
+
+```java
+n &~(1<<k)
+```
+
+### Why This Is Wrong
+
+The inverted mask contains many leading `1`s because Java stores integers using **32-bit Two's Complement representation
+**.
+
+Example:
+
+```text
+1 << 2 = 00000000 00000000 00000000 00000100
+```
+
+After inversion:
+
+```text
+~(1 << 2)
+
+11111111 11111111 11111111 11111011
+```
+
+Notice that almost every bit becomes `1`.
+
+Now if we use OR:
+
+```text
+n | ~(1 << k)
+```
+
+Example:
+
+```text
+1101
+11111111111111111111111111111011
+--------------------------------
+11111111111111111111111111111111
+```
+
+Result:
+
+```text
+-1
+```
+
+or another negative number depending on the input.
 
 ---
 
-## 🧠 Logic
+# 🤯 Why Was I Getting Negative Numbers?
 
-AND with 0 clears the bit.
+Java stores integers using **Two's Complement**.
+
+In a 32-bit integer:
+
+```text
+Most Significant Bit (MSB)
+```
+
+acts as the **sign bit**.
+
+```text
+0 → Positive
+1 → Negative
+```
+
+When we applied:
+
+```java
+n |~(1<<k)
+```
+
+the inverted mask already had:
+
+```text
+11111111 11111111 11111111 xxxxxxxx
+```
+
+The sign bit became:
+
+```text
+1
+```
+
+which tells Java:
+
+```text
+"This number is negative."
+```
+
+Therefore the result often became:
+
+```text
+-1
+-5
+-9
+...
+```
+
+instead of the expected positive value.
+
+---
+
+# 🔥 Why AND Works
+
+The inverted mask contains:
+
+```text
+1 everywhere
+0 at the K-th bit
+```
+
+AND has the property:
+
+```text
+1 & x = x
+0 & x = 0
+```
+
+Therefore:
+
+- The K-th bit becomes `0`
+- All other bits remain unchanged
+
+Exactly what we want.
+
+---
+
+# ⚠️ Edge Cases
+
+### 1. Bit Already Clear
+
+```text
+n = 9
+1001
+```
+
+Clear bit 2:
+
+```text
+1001
+1011
+----
+1001
+```
+
+Result remains:
+
+```text
+9
+```
+
+---
+
+### 2. Clearing the 0th Bit
+
+```text
+n = 5
+```
+
+```text
+0101
+1110
+----
+0100
+```
+
+Result:
+
+```text
+4
+```
+
+---
+
+### 3. Number is Zero
+
+```text
+n = 0
+```
+
+Any bit cleared:
+
+```text
+0
+```
+
+Result remains:
+
+```text
+0
+```
+
+---
+
+# ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+# 🎓 Interview Takeaway
+
+Remember the four most important bit manipulation formulas:
+
+| Operation  | Formula         |
+|------------|-----------------|
+| Check Bit  | `n & (1 << k)`  |
+| Set Bit    | `n \| (1 << k)` |
+| Clear Bit  | `n & ~(1 << k)` |
+| Toggle Bit | `n ^ (1 << k)`  |
+
+A very common beginner mistake is:
+
+```java
+n |~(1<<k)
+```
+
+because OR does **not clear** bits.
+
+To clear a bit, always think:
+
+```text
+Clear
+=
+AND
++
+NOT Mask
+```
+
+---
+
+# 🧩 Memory Trick
+
+Imagine the mask as a stencil 🎭.
+
+```text
+1 → Keep the bit
+0 → Erase the bit
+```
+
+After inversion:
+
+```text
+11101111
+```
+
+the target bit position contains a hole (`0`).
+
+When AND is applied:
+
+```java
+n &~(1<<k)
+```
+
+that bit gets erased while everything else survives.
+
+Remember:
+
+```text
+Clear Bit
+=
+AND with Inverted Mask
+```
+
+```java
+n &~(1<<k)
+```
+
+🚀 **Golden Memory Rule**
+
+```text
+Check  → AND
+Set    → OR
+Clear  → AND + NOT
+Toggle → XOR
+```
+
+Master these four formulas, and nearly every beginner bit manipulation problem becomes straightforward.
 
 ---
 
