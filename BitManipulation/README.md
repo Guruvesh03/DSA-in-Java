@@ -1906,23 +1906,377 @@ n |(newBit <<i)
 
 # 6️⃣ Toggle ith Bit
 
-## 📌 Problem
+# 📌 Problem: Toggle the K-th Bit
 
-Toggle the ith bit.
+Given an integer `n` and a bit position `k`, toggle the K-th bit of the number and return the resulting value.
 
----
+Toggling means:
 
-## ⚡ Trick Used
-
-```java
-n ^(1<<i)
+```text
+0 → 1
+1 → 0
 ```
 
 ---
 
-## 💡 Intuition
+# ⚡ Golden Trick
 
-XOR with 1 flips the bit.
+Use the XOR operator with a mask containing only the K-th bit set.
+
+```java
+n ^(1<<k)
+```
+
+XOR automatically flips the target bit while leaving all other bits unchanged.
+
+---
+
+# 🧠 Intuition
+
+To toggle a bit, we need something that can:
+
+```text
+Turn 0 into 1
+Turn 1 into 0
+```
+
+The XOR operator has exactly this property:
+
+```text
+0 ^ 1 = 1
+1 ^ 1 = 0
+```
+
+So we create a mask having only the K-th bit set:
+
+```java
+1<<k
+```
+
+and XOR it with the number.
+
+---
+
+# 🪄 Dry Run
+
+### Input
+
+```text
+n = 13
+k = 2
+```
+
+Binary representation:
+
+```text
+13 = 1101
+```
+
+### Step 1: Create Mask
+
+```text
+1 << 2 = 0100
+```
+
+### Step 2: Apply XOR
+
+```text
+1101
+0100
+----
+1001
+```
+
+### Result
+
+```text
+9
+```
+
+The 2nd bit changed from:
+
+```text
+1 → 0
+```
+
+---
+
+# ❌ Counter Example
+
+Toggle the same bit twice.
+
+### First Toggle
+
+```text
+13 = 1101
+```
+
+```text
+1101
+0100
+----
+1001
+```
+
+Result:
+
+```text
+9
+```
+
+### Second Toggle
+
+```text
+1001
+0100
+----
+1101
+```
+
+Result:
+
+```text
+13
+```
+
+Notice that toggling the same bit twice restores the original number.
+
+---
+
+# 🔥 Why It Works
+
+XOR has a special property:
+
+```text
+0 ^ 1 = 1
+1 ^ 1 = 0
+```
+
+and
+
+```text
+0 ^ 0 = 0
+1 ^ 0 = 1
+```
+
+The mask contains:
+
+```text
+0 everywhere
+1 only at the K-th bit
+```
+
+Therefore:
+
+- The K-th bit gets flipped.
+- All other bits remain unchanged.
+
+---
+
+# ⚠️ Common Mistake
+
+Many beginners confuse XOR with OR.
+
+### Wrong
+
+```java
+n |(1<<k)
+```
+
+This only sets the bit.
+
+```text
+0 → 1
+1 → 1
+```
+
+The bit never changes from `1` back to `0`.
+
+---
+
+### Correct
+
+```java
+n ^(1<<k)
+```
+
+This truly toggles the bit.
+
+```text
+0 → 1
+1 → 0
+```
+
+---
+
+# ⚠️ Edge Cases
+
+### 1. Toggle a Set Bit
+
+```text
+n = 13
+1101
+```
+
+Toggle bit 2:
+
+```text
+1101
+0100
+----
+1001
+```
+
+Result:
+
+```text
+9
+```
+
+---
+
+### 2. Toggle an Unset Bit
+
+```text
+n = 9
+1001
+```
+
+Toggle bit 2:
+
+```text
+1001
+0100
+----
+1101
+```
+
+Result:
+
+```text
+13
+```
+
+---
+
+### 3. Toggle the 0th Bit
+
+```text
+n = 10
+1010
+```
+
+Toggle bit 0:
+
+```text
+1010
+0001
+----
+1011
+```
+
+Result:
+
+```text
+11
+```
+
+---
+
+### 4. Number is Zero
+
+```text
+n = 0
+k = 3
+```
+
+```text
+0000
+1000
+----
+1000
+```
+
+Result:
+
+```text
+8
+```
+
+---
+
+# ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+# 🎓 Interview Takeaway
+
+The four most important bit manipulation formulas are:
+
+| Operation  | Formula         |
+|------------|-----------------|
+| Check Bit  | `n & (1 << k)`  |
+| Set Bit    | `n \| (1 << k)` |
+| Clear Bit  | `n & ~(1 << k)` |
+| Toggle Bit | `n ^ (1 << k)`  |
+
+Among these, XOR is the only operation that flips a bit.
+
+---
+
+# 🧩 Memory Trick
+
+Think of XOR as a switch 🔘.
+
+Every time you press it:
+
+```text
+OFF → ON
+ON → OFF
+```
+
+Press it once:
+
+```text
+0 → 1
+1 → 0
+```
+
+Press it again:
+
+```text
+1 → 0
+0 → 1
+```
+
+That's why:
+
+```text
+Toggle Bit
+=
+XOR with Shifted 1
+```
+
+```java
+n ^(1<<k)
+```
+
+🚀 **Golden Memory Rule**
+
+```text
+Check  → AND
+Set    → OR
+Clear  → AND + NOT
+Toggle → XOR
+```
+
+If OR is a marker 🖊️ that permanently writes a `1`,
+then XOR is a switch 🎛️ that flips the bit every time you touch it.
 
 ---
 
