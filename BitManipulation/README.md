@@ -2871,6 +2871,519 @@ Only unique element remains.
 
 ---
 
+# 1️⃣4️⃣ Set the Rightmost Unset Bit
+
+# 📌 Problem: Set the Rightmost Unset Bit
+
+Given a non-negative integer `N`, set its **rightmost unset (0) bit** and return the resulting number.
+
+---
+
+## 🧾 Examples
+
+### Example 1
+
+```text
+Input:  N = 10
+
+Binary:
+1010
+
+Rightmost unset bit:
+1010
+   ↑
+
+After setting:
+1011
+
+Output: 11
+```
+
+### Example 2
+
+```text
+Input:  N = 7
+
+Binary:
+111
+
+After setting the rightmost unset bit:
+1111
+
+Output: 15
+```
+
+---
+
+# ⚡ Golden Trick
+
+```java
+n |(n +1)
+```
+
+This single expression sets the **rightmost unset bit** of a number.
+---
+
+# 🧠 Intuition
+
+To understand the trick, let's first see what happens when we add `1`.
+
+Consider:
+
+```text
+N = 10
+
+Binary:
+1010
+```
+
+Adding `1`:
+
+```text
+1010
++   1
+----
+1011
+```
+
+Notice something interesting:
+
+```text
+1010
+1011
+   ↑
+```
+
+The rightmost unset bit became `1`.
+
+Now perform OR:
+
+```text
+1010
+1011
+----
+1011
+```
+
+The OR operation preserves all existing `1`s and ensures that the rightmost unset bit becomes `1`.
+
+---
+
+# 🪄 Dry Run
+
+## Example: N = 10
+
+### Step 1
+
+```text
+N = 10
+
+Binary:
+1010
+```
+
+### Step 2
+
+```text
+N + 1
+
+1010
++   1
+----
+1011
+```
+
+### Step 3
+
+Apply OR:
+
+```text
+1010
+1011
+----
+1011
+```
+
+### Step 4
+
+Convert back to decimal:
+
+```text
+1011 = 11
+```
+
+✅ Answer = 11
+
+---
+
+# ❌ Why Can't We Just Use `n + 1`?
+
+Many beginners think:
+
+```java
+return n +1;
+```
+
+should work.
+
+It works for some cases, but completely fails for others.
+
+---
+
+## Case 1: Works Accidentally
+
+```text
+N = 10
+
+1010
+```
+
+```text
+N + 1 = 1011
+```
+
+Output:
+
+```text
+11
+```
+
+Looks correct.
+
+---
+
+## Case 2: Fails
+
+```text
+N = 11
+
+Binary:
+1011
+```
+
+Adding 1:
+
+```text
+1011
++   1
+----
+1100
+```
+
+Result:
+
+```text
+12
+```
+
+But the expected answer is:
+
+```text
+1011
+
+Rightmost unset bit:
+1011
+  ↑
+
+Set it:
+
+1111 = 15
+```
+
+---
+
+### Comparison
+
+```text
+Using n + 1      → 1100 (12) ❌
+Using n|(n+1)    → 1111 (15) ✅
+```
+
+Why?
+
+Because `n + 1` may change multiple bits due to carry propagation.
+
+```text
+1011 + 1
+
+1 + 1 = 0 (carry)
+1 + carry = 0 (carry)
+0 + carry = 1
+```
+
+Result:
+
+```text
+1100
+```
+
+Several bits changed.
+
+But our goal is only:
+
+```text
+Set the first 0 bit from the right.
+```
+
+The OR operation guarantees exactly that.
+
+---
+
+# 🔍 Why Does `n | (n + 1)` Always Work?
+
+Suppose:
+
+```text
+N = xxxx01111
+```
+
+The rightmost unset bit is:
+
+```text
+xxxx0 1111
+    ↑
+```
+
+Adding 1:
+
+```text
+xxxx10000
+```
+
+Observe:
+
+1. The rightmost unset bit becomes `1`.
+2. All bits to its right become `0`.
+
+Now OR them:
+
+```text
+xxxx01111
+xxxx10000
+----------
+xxxx11111
+```
+
+Result:
+
+```text
+The rightmost unset bit is set.
+All existing 1s remain unchanged.
+```
+
+Exactly what we need.
+
+---
+
+# 🔥 Why It Works
+
+When we compute:
+
+```java
+n |(n +1)
+```
+
+- `n + 1` turns the first `0` bit (from the right) into `1`.
+- OR keeps every existing `1`.
+- OR also keeps the newly created `1`.
+
+Therefore:
+
+```text
+The rightmost unset bit becomes set.
+```
+
+This works in a single operation.
+
+---
+
+# ⚠️ Edge Cases
+
+### 1. Number is 0
+
+```text
+0  -> 1
+```
+
+---
+
+### 2. Single Bit Number
+
+```text
+1 -> 3
+```
+
+```text
+1
+↓
+
+11
+```
+
+---
+
+### 3. Multiple Trailing Ones
+
+```text
+11
+
+1011
+```
+
+Result:
+
+```text
+1111 = 15
+```
+
+---
+
+### 4. All Bits Are Set
+
+```text
+7
+
+111
+```
+
+Result:
+
+```text
+1111 = 15
+```
+
+---
+
+### 5. Large Power of Two
+
+```text
+1024
+
+10000000000
+```
+
+Result:
+
+```text
+10000000001
+```
+
+---
+
+### 6. Integer Overflow Case
+
+```text
+Integer.MAX_VALUE
+```
+
+```text
+2147483647
+
+01111111111111111111111111111111
+```
+
+The next bit lies outside the positive `int` range.
+
+Be careful if the platform includes this case.
+
+---
+
+# ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+# 🎓 Interview Takeaway
+
+Whenever you hear:
+
+```text
+Set the rightmost unset bit
+```
+
+Immediately think:
+
+```java
+n |(n +1)
+```
+
+Key observation:
+
+```text
+n + 1
+```
+
+finds the first zero from the right and turns it into one.
+
+Then:
+
+```text
+OR
+```
+
+preserves all existing set bits while keeping that newly set bit.
+
+This produces the desired answer in constant time.
+
+---
+
+# 🧩 Memory Trick
+
+Imagine a binary number as a row of switches:
+
+```text
+1011
+```
+
+You want to turn ON the first OFF switch from the right.
+
+```text
+1011
+  ↑
+```
+
+`n + 1` locates that switch and flips it ON.
+
+```text
+1100
+```
+
+Then OR merges the old and new states:
+
+```text
+1011
+1100
+----
+1111
+```
+
+🎯 **Memory Formula**
+
+```java
+Set Rightmost
+Unset Bit
+        =
+        n | (n + 1)
+```
+
+Whenever you see:
+
+```text
+Rightmost 0 → Make it 1
+```
+
+Think:
+
+```text
+ADD 1 ➜ OR
+```
+
+🚀
+
 # 1️⃣4️⃣ Remove Last Set Bit
 
 ## ⚡ Trick
