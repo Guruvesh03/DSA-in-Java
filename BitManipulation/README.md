@@ -4062,6 +4062,338 @@ Each bit contributes power of 2.
 
 ---
 
+# 1️⃣7️⃣ Minimum Bit Flips to Convert Number
+
+## 📌 Problem
+
+Given two integers `start` and `goal`, determine the **minimum number of bit flips** required to convert `start` into
+`goal`.
+
+### Example
+
+```text
+start = 10
+goal  = 7
+
+10 = 1010
+ 7 = 0111
+
+Answer = 3
+```
+
+---
+
+## ⚡ Golden Trick
+
+### XOR reveals differences
+
+```java
+start ^goal
+```
+
+- Same bits → `0`
+- Different bits → `1`
+
+The resulting number contains `1`s exactly at the positions that need to be flipped.
+
+### Count Set Bits Efficiently
+
+```java
+n =n &(n -1);
+```
+
+This removes the **rightmost set bit** in every iteration.
+
+The number of iterations equals the number of set bits.
+
+---
+
+## 💻 Code
+
+### Find Different Bit Positions
+
+```java
+int xor = start ^ goal;
+```
+
+### Count Set Bits
+
+```java
+while(xor >0){
+xor =xor &(xor -1);
+count++;
+        }
+```
+
+---
+
+## 🧠 Intuition
+
+Think of XOR as a **difference detector**.
+
+```text
+1010
+0111
+----
+1101
+```
+
+Every `1` in the XOR result represents a bit position where the two numbers differ.
+
+Now the task becomes:
+
+> Count how many `1`s exist in the XOR result.
+
+Instead of checking all 32 bits one by one, repeatedly remove the rightmost set bit until the number becomes zero.
+
+---
+
+## 🪄 Dry Run
+
+### Input
+
+```text
+start = 10
+goal  = 7
+```
+
+### Step 1: XOR
+
+```text
+1010
+0111
+----
+1101
+```
+
+```java
+xor =13
+```
+
+---
+
+### Iteration 1
+
+```text
+1101 & 1100 = 1100
+```
+
+```text
+count = 1
+```
+
+---
+
+### Iteration 2
+
+```text
+1100 & 1011 = 1000
+```
+
+```text
+count = 2
+```
+
+---
+
+### Iteration 3
+
+```text
+1000 & 0111 = 0000
+```
+
+```text
+count = 3
+```
+
+Loop ends.
+
+### Output
+
+```text
+3
+```
+
+---
+
+## ❌ Counter Example
+
+### Wrong Approach
+
+Checking every bit individually:
+
+```java
+for(int i = 0;
+i< 32;i++)
+```
+
+This works, but it examines all bits even when only a few bits differ.
+
+Example:
+
+```text
+10000000000000000000000000000000
+```
+
+Only one bit is set, yet all 32 positions are checked.
+
+---
+
+## 🔥 Why It Works
+
+XOR has a special property:
+
+```text
+0 ^ 0 = 0
+1 ^ 1 = 0
+0 ^ 1 = 1
+1 ^ 0 = 1
+```
+
+Therefore:
+
+```java
+start ^goal
+```
+
+creates a number whose set bits represent exactly the positions that must be flipped.
+
+Brian Kernighan's Algorithm:
+
+```java
+n &(n -1)
+```
+
+removes one set bit at a time.
+
+Thus:
+
+```text
+Number of iterations
+=
+Number of required bit flips
+```
+
+---
+
+## ⚠️ Edge Cases
+
+### Same Numbers
+
+```text
+start = 5
+goal  = 5
+```
+
+```text
+XOR = 0
+Answer = 0
+```
+
+---
+
+### One Number is Zero
+
+```text
+start = 0
+goal  = 7
+```
+
+```text
+0 = 0000
+7 = 0111
+```
+
+```text
+Answer = 3
+```
+
+---
+
+### Single Bit Difference
+
+```text
+start = 8
+goal  = 0
+```
+
+```text
+1000 → 0000
+```
+
+```text
+Answer = 1
+```
+
+---
+
+## ⏱️ Complexity
+
+### Time Complexity
+
+```text
+O(k)
+```
+
+where `k` = number of set bits in `(start ^ goal)`.
+
+---
+
+### Space Complexity
+
+```text
+O(1)
+```
+
+---
+
+## 🎓 Interview Takeaway
+
+Whenever an interviewer asks:
+
+> "How many bits differ between two numbers?"
+
+Immediately think:
+
+```java
+start ^goal
+```
+
+Whenever you need to count set bits efficiently:
+
+```java
+n &(n -1)
+```
+
+Combining these two ideas gives the optimal solution.
+
+---
+
+## 🧩 Memory Trick
+
+🎯 **XOR Finds Differences**
+
+```text
+Different → 1
+Same      → 0
+```
+
+🎯 **AND with (n - 1) Removes One Set Bit**
+
+```text
+n & (n - 1)
+```
+
+💡 Remember:
+
+```text
+Difference Detector
+        +
+Set Bit Counter
+        =
+Minimum Bit Flips
+```
+
 # 🧨 XOR Mastery
 
 XOR is one of the most important tools in Bit Manipulation.
