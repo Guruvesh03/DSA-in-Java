@@ -2628,37 +2628,391 @@ Therefore, the number is a Power of 2. 🚀
 
 ## 📌 Problem
 
-Count number of set bits.
+Given a non-negative integer `N`, count the number of **set bits (1s)** present in its binary representation.
 
----
+A set bit is a bit whose value is `1`.
 
-## Method 1: Basic Shifting
+### Example
 
-### Logic
+```text
+N = 13
 
-Check last bit repeatedly.
+Binary = 1101
 
----
-
-## Method 2: Brian Kernighan Algorithm
-
-### ⚡ Trick
-
-```java
-n =n &(n -1)
+Set Bits = 3
 ```
 
 ---
 
-## 💡 Intuition
+## ⚡ Golden Trick
 
-Each operation removes one set bit.
+```java
+n =n &(n -1);
+```
+
+This operation removes the **rightmost set bit** from a number.
+
+Each iteration removes exactly one `1`.
+
+Therefore:
+
+```text
+Number of iterations = Number of set bits
+```
 
 ---
 
-## 🧠 Advantage
+## 💻 Important Logic
 
-Runs only for number of set bits.
+### Approach 1: Check Every Bit
+
+```java
+for(int i = 0;
+i< 31;i++){
+        if((n &(1<<i))!=0){
+count++;
+        }
+        }
+```
+
+---
+
+### Approach 2: Check Last Bit Repeatedly
+
+```java
+while(n >0){
+count +=(n &1);
+n >>=1;
+        }
+```
+
+---
+
+### Approach 3: Brian Kernighan's Algorithm ⭐
+
+```java
+while(n >0){
+n =n &(n -1);
+count++;
+        }
+```
+
+---
+
+## 🧠 Intuition
+
+Every set bit contributes `1` to the final count.
+
+Instead of checking every position individually, we can repeatedly remove set bits until the number becomes zero.
+
+Consider:
+
+```text
+1101
+```
+
+If we remove one set bit at a time:
+
+```text
+1101
+↓
+1100
+↓
+1000
+↓
+0000
+```
+
+We removed:
+
+```text
+3 set bits
+```
+
+Hence the answer is:
+
+```text
+3
+```
+
+---
+
+## 🪄 Dry Run
+
+### Example: N = 13
+
+```text
+Binary = 1101
+```
+
+### Iteration 1
+
+```text
+n       = 1101
+n - 1   = 1100
+
+1101
+1100
+----
+1100
+```
+
+Count = 1
+
+---
+
+### Iteration 2
+
+```text
+n       = 1100
+n - 1   = 1011
+
+1100
+1011
+----
+1000
+```
+
+Count = 2
+
+---
+
+### Iteration 3
+
+```text
+n       = 1000
+n - 1   = 0111
+
+1000
+0111
+----
+0000
+```
+
+Count = 3
+
+---
+
+Number becomes:
+
+```text
+0000
+```
+
+Stop.
+
+✅ Answer = 3
+
+---
+
+## ❌ Why Not Check Every Bit?
+
+A common solution is:
+
+```java
+for(int i = 0;
+i< 31;i++)
+```
+
+This works perfectly.
+
+However, it always performs:
+
+```text
+31 iterations
+```
+
+even when only a few bits are set.
+
+Example:
+
+```text
+1000000000000000000000000000000
+```
+
+contains only:
+
+```text
+1 set bit
+```
+
+Yet the loop still checks all 31 positions.
+
+---
+
+## 🔥 Why Brian Kernighan's Algorithm Is Better
+
+Observe:
+
+```text
+n & (n - 1)
+```
+
+always removes exactly one set bit.
+
+Example:
+
+```text
+1101 → 1100
+1100 → 1000
+1000 → 0000
+```
+
+One set bit disappears in every iteration.
+
+Therefore:
+
+```text
+Iterations = Number of Set Bits
+```
+
+Not:
+
+```text
+Iterations = Total Number of Bits
+```
+
+This makes it extremely efficient when the number contains only a few set bits.
+
+---
+
+## ⚠️ Edge Cases
+
+### 1. Number is Zero
+
+```text
+N = 0
+
+Binary = 0
+
+Set Bits = 0
+```
+
+---
+
+### 2. Number is One
+
+```text
+N = 1
+
+Binary = 1
+
+Set Bits = 1
+```
+
+---
+
+### 3. All Bits Set
+
+```text
+N = 15
+
+Binary = 1111
+
+Set Bits = 4
+```
+
+---
+
+### 4. Large Power of Two
+
+```text
+N = 1024
+
+Binary = 10000000000
+
+Set Bits = 1
+```
+
+---
+
+### 5. Maximum Integer Value
+
+```text
+N = 2147483647
+
+Binary = 31 ones
+
+Set Bits = 31
+```
+
+---
+
+## ⏱️ Complexity
+
+| Approach        | Time Complexity       | Space Complexity |
+|-----------------|-----------------------|------------------|
+| Check Every Bit | O(31)                 | O(1)             |
+| Shift and Check | O(Number of Bits)     | O(1)             |
+| Brian Kernighan | O(Number of Set Bits) | O(1)             |
+
+---
+
+## 🎓 Interview Takeaway
+
+Whenever you hear:
+
+```text
+Count Set Bits
+```
+
+Think:
+
+```java
+n &(n -1)
+```
+
+because it removes the rightmost set bit in one operation.
+
+This is one of the most frequently asked bit manipulation tricks in coding interviews and competitive programming.
+
+---
+
+## 🧩 Memory Trick
+
+Imagine every set bit is a glowing bulb 💡:
+
+```text
+11010100
+```
+
+### Normal Approach
+
+```text
+🔍 Check every position
+```
+
+You inspect every bulb, whether it's ON or OFF.
+
+---
+
+### Brian Kernighan
+
+```text
+🎯 Remove one glowing bulb at a time
+```
+
+```text
+11010100
+↓
+11010000
+↓
+11000000
+↓
+10000000
+↓
+00000000
+```
+
+Each removal increases the count by `1`.
+
+### Golden Formula
+
+```java
+n =n &(n -1);
+```
+
+💡 **One operation = One set bit removed**
 
 ---
 
