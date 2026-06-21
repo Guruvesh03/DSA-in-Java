@@ -71,32 +71,429 @@ It is widely used in:
 
 ---
 
-# 📌 Important Terms
+# 🧠 Bit Manipulation Fundamentals: MSB, LSB & Negative Numbers
 
-## LSB (Least Significant Bit)
+---
 
-The rightmost bit.
+# 🎯 What is a Bit?
+
+A bit is the smallest unit of data in a computer.
+
+```text
+0 → OFF
+1 → ON
+```
 
 Example:
 
 ```text
-1011
-   ↑
-  LSB
+13 = 1101₂
 ```
 
 ---
 
-## MSB (Most Significant Bit)
+# 🔝 MSB (Most Significant Bit)
 
-The leftmost bit.
+The leftmost bit in a binary number.
+
+```text
+13 = 1101
+     ↑
+    MSB
+```
+
+### 📌 Why is it important?
+
+- Represents the highest power of 2.
+- In signed numbers, it acts as the sign bit.
+
+### Examples
+
+```text
+13  = 1101
+MSB = 1
+
+5   = 0101
+MSB = 0
+```
+
+---
+
+# 🔻 LSB (Least Significant Bit)
+
+The rightmost bit in a binary number.
+
+```text
+13 = 1101
+        ↑
+       LSB
+```
+
+### 📌 Why is it important?
+
+Used to determine:
+
+- Even/Odd numbers
+- Last binary digit
+
+### Quick Check
+
+```java
+if((n &1)==1)
+```
+
+Then number is Odd.
+
+```java
+if((n &1)==0)
+```
+
+Then number is Even.
+
+### Examples
+
+```text
+10 = 1010 → LSB = 0 → Even
+
+11 = 1011 → LSB = 1 → Odd
+```
+
+---
+
+# ⚡ Signed vs Unsigned Numbers
+
+## Unsigned
+
+All bits represent magnitude.
+
+```text
+8-bit
+
+00000000 = 0
+11111111 = 255
+```
+
+Range:
+
+```text
+0 to 255
+```
+
+---
+
+## Signed
+
+One bit is reserved for sign.
+
+```text
+MSB = 0 → Positive
+
+MSB = 1 → Negative
+```
+
+Range for 8-bit:
+
+```text
+-128 to +127
+```
+
+---
+
+# 🔥 How Negative Numbers Are Represented
+
+Computers use:
+
+## Two's Complement
+
+Not Sign-Magnitude
+Not One's Complement
+
+Two's Complement
+
+---
+
+# Step 1: Write Positive Binary
 
 Example:
 
 ```text
+5 = 00000101
+```
+
+---
+
+# Step 2: Invert Bits
+
+```text
+00000101
+
+↓
+
+11111010
+```
+
+---
+
+# Step 3: Add 1
+
+```text
+11111010
++       1
+-----------
+11111011
+```
+
+Result:
+
+```text
+-5 = 11111011
+```
+
+---
+
+# 🧪 Verify
+
+Take:
+
+```text
+11111011
+```
+
+Invert:
+
+```text
+00000100
+```
+
+Add 1:
+
+```text
+00000101
+```
+
+Which is:
+
+```text
+5
+```
+
+Therefore:
+
+```text
+11111011 = -5
+```
+
+---
+
+# 🤔 Why Two's Complement?
+
+Because arithmetic becomes easy.
+
+Example:
+
+```text
+5 + (-5)
+
+00000101
+11111011
+---------
+00000000
+```
+
+Result:
+
+```text
+0
+```
+
+No special subtraction circuitry required.
+
+---
+
+# 🔍 Sign Bit
+
+For signed integers:
+
+```text
+MSB = 0 → Positive
+
+MSB = 1 → Negative
+```
+
+Examples:
+
+```text
+00000101 = +5
+
+11111011 = -5
+```
+
+---
+
+# 🚀 Important Bit Manipulation Concepts
+
+## Check Kth Bit
+
+```java
+(n &(1<<k))!=0
+```
+
+---
+
+## Set Kth Bit
+
+```java
+n |(1<<k)
+```
+
+---
+
+## Clear Kth Bit
+
+```java
+n &~(1<<k)
+```
+
+---
+
+## Toggle Kth Bit
+
+```java
+n ^(1<<k)
+```
+
+---
+
+## Remove Last Set Bit
+
+```java
+n &(n -1)
+```
+
+### Example
+
+```text
+12 = 1100
+
+11 = 1011
+
+1100
 1011
-↑
-MSB
+----
+1000
+```
+
+---
+
+## Check Power of 2
+
+```java
+(n &(n -1))==0
+```
+
+Condition:
+
+```java
+n >0
+```
+
+---
+
+## Count Set Bits (Brian Kernighan)
+
+```java
+while(n >0)
+        {
+n =n &(n -1);
+count++;
+        }
+```
+
+---
+
+# 🎓 Interview Facts
+
+### 1. Why does `n & (n - 1)` work?
+
+Because subtracting 1 flips:
+
+- Rightmost set bit → 0
+- All bits after it → 1
+
+AND operation removes the last set bit.
+
+---
+
+### 2. Why is LSB used for Odd/Even?
+
+Because:
+
+```text
+Even numbers end with 0
+
+Odd numbers end with 1
+```
+
+in binary.
+
+---
+
+### 3. Why Two's Complement instead of Sign-Magnitude?
+
+- Single representation of zero
+- Easier arithmetic operations
+- Faster hardware implementation
+
+---
+
+# 🧩 Memory Tricks
+
+### MSB
+
+```text
+M → Most
+
+Leftmost bit
+```
+
+Think:
+
+```text
+"Big Boss Bit"
+```
+
+---
+
+### LSB
+
+```text
+L → Least
+
+Rightmost bit
+```
+
+Think:
+
+```text
+"Last Bit"
+```
+
+---
+
+### Two's Complement
+
+```text
+Invert + Add 1
+```
+
+Remember:
+
+```text
+Negative Number
+=
+Flip All Bits
++
+1
 ```
 
 ---
