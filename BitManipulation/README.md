@@ -513,6 +513,464 @@ Flip All Bits
 
 ---
 
+# 🔢 Binary ↔ Decimal Conversion
+
+---
+
+# 📌 Problem
+
+Learn how to convert:
+
+1. Decimal → Binary
+2. Binary → Decimal
+
+These conversions form the foundation of Bit Manipulation because computers internally store everything in binary.
+
+---
+
+# ⚡ Golden Trick
+
+### Decimal → Binary
+
+Keep dividing by 2 and store remainders.
+
+```text
+Remainders (bottom to top) = Binary Number
+```
+
+---
+
+### Binary → Decimal
+
+Multiply each bit by its corresponding power of 2.
+
+```text
+Bit × 2^Position
+```
+
+Then add everything.
+
+---
+
+# 🧠 Decimal to Binary
+
+## Example
+
+Convert:
+
+```text
+13 → Binary
+```
+
+### Repeated Division
+
+```text
+13 ÷ 2 = 6  R = 1
+
+6 ÷ 2 = 3   R = 0
+
+3 ÷ 2 = 1   R = 1
+
+1 ÷ 2 = 0   R = 1
+```
+
+Read remainders from bottom to top:
+
+```text
+1101
+```
+
+Therefore:
+
+```text
+13 = 1101₂
+```
+
+---
+
+# 💻 Decimal → Binary Logic
+
+```java
+while(n >0)
+        {
+        binary.
+
+append(n %2);
+
+n /=2;
+        }
+
+        binary.
+
+reverse();
+```
+
+---
+
+# 🪄 Dry Run
+
+Convert:
+
+```text
+10
+```
+
+```text
+10 ÷ 2 = 5  R=0
+
+5 ÷ 2 = 2   R=1
+
+2 ÷ 2 = 1   R=0
+
+1 ÷ 2 = 0   R=1
+```
+
+Bottom to Top:
+
+```text
+1010
+```
+
+Answer:
+
+```text
+10 = 1010₂
+```
+
+---
+
+# 🧠 Binary to Decimal
+
+## Example
+
+Convert:
+
+```text
+1101₂
+```
+
+Assign powers of 2:
+
+```text
+1    1    0    1
+↑    ↑    ↑    ↑
+2³   2²   2¹   2⁰
+```
+
+Calculate:
+
+```text
+1×8 + 1×4 + 0×2 + 1×1
+```
+
+```text
+8 + 4 + 0 + 1
+```
+
+```text
+13
+```
+
+Therefore:
+
+```text
+1101₂ = 13
+```
+
+---
+
+# 💻 Binary → Decimal Logic
+
+```java
+int decimal = 0;
+int power = 0;
+
+while(binary >0)
+        {
+int lastDigit = binary % 10;
+
+decimal +=lastDigit *(1<<power);
+
+power++;
+
+binary /=10;
+        }
+```
+
+---
+
+# 🪄 Dry Run
+
+Convert:
+
+```text
+1010₂
+```
+
+```text
+0 × 2⁰ = 0
+
+1 × 2¹ = 2
+
+0 × 2² = 0
+
+1 × 2³ = 8
+```
+
+Sum:
+
+```text
+8 + 2 = 10
+```
+
+Answer:
+
+```text
+1010₂ = 10
+```
+
+---
+
+# 🔥 Alternative Binary → Decimal Logic
+
+Instead of:
+
+```java
+lastDigit *Math.
+
+pow(2,power)
+```
+
+Use:
+
+```java
+lastDigit *(1<<power)
+```
+
+Because:
+
+```text
+1 << power = 2^power
+```
+
+and bit shifting is faster.
+
+---
+
+# 🎯 Understanding Positions
+
+Binary Number:
+
+```text
+110101
+```
+
+| Bit | Power | Value |
+|-----|-------|-------|
+| 1   | 2⁵    | 32    |
+| 1   | 2⁴    | 16    |
+| 0   | 2³    | 0     |
+| 1   | 2²    | 4     |
+| 0   | 2¹    | 0     |
+| 1   | 2⁰    | 1     |
+
+Total:
+
+```text
+32 + 16 + 4 + 1 = 53
+```
+
+---
+
+# ❌ Common Mistakes
+
+### Mistake 1
+
+Reading decimal-to-binary remainders from top to bottom.
+
+Wrong:
+
+```text
+13 → 1011
+```
+
+Correct:
+
+```text
+13 → 1101
+```
+
+Always read from:
+
+```text
+Bottom → Top
+```
+
+---
+
+### Mistake 2
+
+Starting powers from 1.
+
+Wrong:
+
+```text
+2¹, 2², 2³ ...
+```
+
+Correct:
+
+```text
+2⁰, 2¹, 2² ...
+```
+
+LSB always starts at:
+
+```text
+2⁰
+```
+
+---
+
+# 🔥 Why Powers of 2?
+
+Decimal:
+
+```text
+347
+
+3×10² + 4×10¹ + 7×10⁰
+```
+
+Binary:
+
+```text
+1101
+
+1×2³ + 1×2² + 0×2¹ + 1×2⁰
+```
+
+Binary is simply a base-2 number system.
+
+---
+
+# ⚠️ Edge Cases
+
+### Decimal = 0
+
+```text
+0 → 0
+```
+
+---
+
+### Binary = 0
+
+```text
+0 → 0
+```
+
+---
+
+### Leading Zeros
+
+```text
+001101
+```
+
+Same as:
+
+```text
+1101
+```
+
+Leading zeros do not affect value.
+
+---
+
+# ⏱️ Complexity
+
+### Decimal → Binary
+
+```text
+O(log₂N)
+```
+
+---
+
+### Binary → Decimal
+
+```text
+O(Number of Bits)
+```
+
+---
+
+# 🎓 Interview Takeaway
+
+### Decimal → Binary
+
+Keep dividing by 2 and store remainders.
+
+### Binary → Decimal
+
+Multiply each bit by its corresponding power of 2 and add.
+
+### Important Identity
+
+```java
+1<<k
+```
+
+means
+
+```text
+2^k
+```
+
+This identity appears in almost every Bit Manipulation problem.
+
+---
+
+# 🧩 Memory Trick
+
+### Decimal → Binary
+
+```text
+Divide by 2
+Collect Remainders
+Read Bottom to Top
+```
+
+Think:
+
+📦 "Division → Remainders → Reverse"
+
+---
+
+### Binary → Decimal
+
+```text
+Bit × Power of 2
+```
+
+Think:
+
+📦 "Multiply → Add → Decimal"
+
+---
+
+# ⚡ Quick Revision Sheet
+
+| Conversion       | Trick                  |
+|------------------|------------------------|
+| Decimal → Binary | Divide by 2 repeatedly |
+| Binary → Decimal | Bit × Power of 2       |
+| 2^k              | 1 << k                 |
+| LSB Position     | 2⁰                     |
+| MSB Position     | Highest Power of 2     |
+| Time Complexity  | O(log N)               |
+
 # ⚙️ Bitwise Operators Cheatsheet
 
 | Operator | Name        | Purpose                 |
