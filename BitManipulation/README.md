@@ -2731,32 +2731,367 @@ Master these four formulas, and nearly every beginner bit manipulation problem b
 
 # 5️⃣ Update ith Bit
 
+> 🧩 **Goal:** Update the `ith` bit of a number to a given value (`0` or `1`).
+
+---
+
 ## 📌 Problem
 
-Update ith bit according to given value.
+Given:
+
+- A number `n`
+- A bit position `i`
+- A new bit value `newBit` (`0` or `1`)
+
+Update the `ith` bit of `n` so that it becomes exactly `newBit`.
 
 ---
 
-## 💡 Intuition
+## 🤔 Why Is This Problem Interesting?
 
-First clear the bit, then set according to requirement.
+Setting a bit is easy.
+
+Clearing a bit is easy.
+
+But what if you don't know the current value of the bit?
+
+The bit could already be:
+
+- `0`
+- `1`
+
+We need a solution that works in **both cases**.
 
 ---
 
-## ⚡ Logic
+## ⚡ Golden Trick
+
+Updating a bit is a **two-step process**:
+
+```text
+Update Bit
+    =
+Clear Bit
+    +
+Set New Value
+```
+
+First erase the old bit.
+
+Then insert the new bit.
+
+---
+
+## 💻 Important Logic
+
+### Step 1: Clear ith Bit
+
+```java
+n =n &~(1<<i);
+```
+
+### Step 2: Set New Value
+
+```java
+n =n |(newBit <<i);
+```
+
+### Combined Formula
+
+```java
+n =(n &~(1<<i))|(newBit <<i);
+```
+
+---
+
+## 🧠 Intuition
+
+Imagine the bit position as a whiteboard.
+
+Suppose the whiteboard currently contains:
+
+```text
+1
+```
+
+or
+
+```text
+0
+```
+
+You want to write a new value.
+
+Would you directly write over it?
+
+❌ No.
+
+First erase the board.
+
+Then write the new value.
+
+```text
+Old Bit
+   ↓
+Erase
+   ↓
+Write New Bit
+```
+
+Bit updating works exactly the same way.
+
+---
+
+## 🪄 Dry Run
+
+### Example
+
+```text
+n = 13
+
+Binary:
+1101
+
+i = 2
+newBit = 0
+```
 
 ### Step 1: Clear Bit
+
+Mask:
+
+```text
+1 << 2
+
+0100
+```
+
+Inverse Mask:
+
+```text
+1011
+```
+
+Operation:
+
+```text
+1101
+1011
+----
+1001
+```
+
+Now bit 2 is definitely `0`.
+
+---
+
+### Step 2: Insert New Value
+
+```text
+newBit = 0
+```
+
+Shift:
+
+```text
+0000
+```
+
+OR Operation:
+
+```text
+1001
+0000
+----
+1001
+```
+
+### Final Answer
+
+```text
+1001 = 9
+```
+
+✅ Bit updated successfully.
+
+---
+
+## ❌ Common Mistake
+
+Many beginners try:
+
+```java
+n ^(newBit <<i)
+```
+
+This is incorrect.
+
+Why?
+
+Because XOR **toggles** the bit.
+
+```text
+1 → 0
+0 → 1
+```
+
+But updating means:
+
+```text
+Set exactly to 0
+or
+Set exactly to 1
+```
+
+These are different operations.
+
+---
+
+## 🔥 Why It Works
+
+### Clear Step
 
 ```java
 n &~(1<<i)
 ```
 
-### Step 2: Set Bit
+Forces the `ith` bit to become:
+
+```text
+0
+```
+
+regardless of its previous value.
+
+---
+
+### Set Step
 
 ```java
 n |(newBit <<i)
 ```
 
+If:
+
+```text
+newBit = 0
+```
+
+nothing changes.
+
+If:
+
+```text
+newBit = 1
+```
+
+the bit becomes `1`.
+
+Thus the final value of the bit is always exactly `newBit`.
+
+---
+
+## ⚠️ Edge Cases
+
+### Case 1: Bit already equals newBit
+
+```text
+Current Bit = 1
+newBit = 1
+```
+
+Still works correctly.
+
+---
+
+### Case 2: Updating to 0
+
+```text
+Current Bit = 1
+newBit = 0
+```
+
+Bit gets cleared.
+
+---
+
+### Case 3: Updating to 1
+
+```text
+Current Bit = 0
+newBit = 1
+```
+
+Bit gets set.
+
+---
+
+### Case 4: Updating Most Significant Bit
+
+The same logic works.
+
+No special handling is required.
+
+---
+
+## ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+Only a few bitwise operations are performed.
+
+---
+
+## 🎓 Interview Takeaway
+
+Whenever you hear:
+
+> "Change a bit to a specific value"
+
+think:
+
+```text
+CLEAR
+   +
+SET
+```
+
+The standard formula is:
+
+```java
+(n &~(1<<i))|(newBit <<i)
+```
+
+This is the most common interview solution.
+
+---
+
+## 🧩 Memory Trick
+
+```text
+UPDATE
+   ↓
+ERASE
+   ↓
+WRITE
+```
+
+Or simply:
+
+```text
+Update Bit
+    =
+Clear Bit
+    +
+Set Bit
+```
+
+🧠 First remove the old bit.
+
+✍️ Then write the new bit.
 ---
 
 # 6️⃣ Toggle ith Bit
