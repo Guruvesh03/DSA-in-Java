@@ -6253,6 +6253,265 @@ XOR is one of the most important tools in Bit Manipulation.
 
 ---
 
+# 1️⃣8️⃣ Add 1 to an Integer Using Bit Manipulation
+
+## 📌 Problem
+
+Add `1` to a given integer without using the `+` operator.
+
+---
+
+## ⚡ Golden Trick
+
+Use the relationship between **Bitwise NOT (`~`)** and **Two's Complement Representation**.
+
+### Logic Snippet
+
+```java
+-(~n)
+```
+
+---
+
+## 🧠 Intuition
+
+Computers store signed integers using **Two's Complement**.
+
+One important identity is:
+
+```text
+~n = -(n + 1)
+```
+
+Rearranging:
+
+```text
+n + 1 = -(~n)
+```
+
+Therefore, to add `1` to a number, we can simply:
+
+```java
+-(~n)
+```
+
+without using the `+` operator.
+
+---
+
+## 🪄 Dry Run
+
+### Example 1
+
+#### Input
+
+```text
+n = 5
+```
+
+#### Binary Representation
+
+```text
+5 = 00000101
+```
+
+#### Apply NOT
+
+```text
+~5
+
+11111010
+```
+
+This represents:
+
+```text
+-6
+```
+
+#### Negate
+
+```text
+-(-6)
+=
+6
+```
+
+#### Result
+
+```text
+5 + 1 = 6
+```
+
+---
+
+### Example 2
+
+#### Input
+
+```text
+n = 10
+```
+
+#### Apply Formula
+
+```text
+-(~10)
+=
+11
+```
+
+#### Result
+
+```text
+10 + 1 = 11
+```
+
+---
+
+## ❌ Brute Force Approach
+
+Use the arithmetic operator:
+
+```java
+n +1
+```
+
+While simple, the goal of this problem is to understand how addition can be achieved using bit-level properties.
+
+---
+
+## 🔥 Why It Works
+
+We know:
+
+```text
+~n = -(n + 1)
+```
+
+For example:
+
+```text
+n = 7
+
+~7 = -8
+```
+
+Taking negative on both sides:
+
+```text
+-(~7)
+=
+-(-8)
+=
+8
+```
+
+which is exactly:
+
+```text
+7 + 1
+```
+
+Thus:
+
+```text
+-(~n)
+```
+
+always produces:
+
+```text
+n + 1
+```
+
+---
+
+## ⚠️ Edge Cases
+
+### n = 0
+
+```text
+-(~0)
+=
+1
+```
+
+### n = -1
+
+```text
+-(~-1)
+=
+0
+```
+
+### n = Integer.MAX_VALUE
+
+Adding 1 causes integer overflow and wraps around according to Java's integer rules.
+
+---
+
+## ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+## 🎓 Interview Takeaway
+
+This problem is less about practical coding and more about understanding:
+
+- Two's Complement Representation
+- Bitwise NOT Operator
+- Relationships between arithmetic and bitwise operations
+
+The key identity to remember is:
+
+```text
+~n = -(n + 1)
+```
+
+which leads directly to:
+
+```text
+n + 1 = -(~n)
+```
+
+---
+
+## 🧩 Memory Trick
+
+Remember the hidden formula:
+
+```text
+~n  →  -(n + 1)
+```
+
+So whenever you see:
+
+```text
+-(~n)
+```
+
+think:
+
+```text
+Minus of Minus Next Number
+```
+
+which simplifies to:
+
+```text
+n + 1
+```
+
+✅ Flip all bits using `~`  
+✅ Negate the result using `-`  
+✅ You get the next integer
+
 # 🎯 Pattern Recognition Guide
 
 | Observation          | Think About         |
