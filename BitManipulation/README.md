@@ -3470,49 +3470,445 @@ then XOR is a switch 🎛️ that flips the bit every time you touch it.
 
 ---
 
-# 7️⃣ Clear Last i Bits
+# 7️⃣ # 🔢 Clear Last i Bits
 
 ## 📌 Problem
 
-Clear last i bits.
+Given a number `n` and an integer `i`, clear (set to 0) the last `i` bits of the number.
 
 ---
 
-## ⚡ Trick Used
+## ⚡ Golden Trick
+
+Create a mask having:
+
+```text
+1s on the left
+0s on the last i positions
+```
+
+Then perform an AND operation.
 
 ```java
-n &(~0<<i)
+n &((-1)<<i)
 ```
 
 ---
 
-## 💡 Intuition
+## 💻 Important Logic
 
-Shift creates trailing zeroes.
+### Create Mask
+
+```java
+(-1)<<i
+```
+
+### Clear Last i Bits
+
+```java
+n &((-1)<<i)
+```
 
 ---
 
-# 8️⃣ Clear Range of Bits
+## 🧠 Intuition
+
+The AND operator preserves bits where the mask contains `1` and clears bits where the mask contains `0`.
+
+By left-shifting `-1`, we get:
+
+```text
+1111111111111000
+```
+
+for `i = 3`.
+
+The last 3 bits become `0`, so they get cleared after the AND operation.
+
+---
+
+## 🪄 Dry Run
+
+### Input
+
+```text
+n = 29
+i = 3
+```
+
+### Binary Representation
+
+```text
+29 = 11101
+```
+
+### Mask
+
+```text
+(-1 << 3)
+
+11111000
+```
+
+### AND Operation
+
+```text
+11101
+11111000
+--------
+11000
+```
+
+### Result
+
+```text
+24
+```
+
+---
+
+## ❌ Counter Example
+
+Using only:
+
+```java
+n <<i
+```
+
+does **not** clear bits.
+
+Example:
+
+```text
+n = 15
+
+1111 << 2
+
+111100
+```
+
+This shifts the entire number and changes its value completely.
+
+---
+
+## 🔥 Why It Works
+
+The mask has:
+
+```text
+1 → Keep the bit
+0 → Clear the bit
+```
+
+Since the last `i` positions contain `0`, AND forces those bits to become `0`.
+
+```text
+x & 1 = x
+x & 0 = 0
+```
+
+---
+
+## ⚠️ Edge Cases
+
+### i = 0
+
+```java
+(-1)<<0
+```
+
+No bits are cleared.
+
+### n = 0
+
+Result remains:
+
+```text
+0
+```
+
+### i ≥ Number of Significant Bits
+
+All meaningful bits may become `0`.
+
+---
+
+## ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+## 🎓 Interview Takeaway
+
+Whenever you need to clear multiple bits from the right side, create a mask with:
+
+```java
+(-1)<<i
+```
+
+and perform an AND operation.
+
+This avoids loops and works in constant time.
+
+---
+
+## 🧩 Memory Trick
+
+Think of the mask as a giant wall of `1`s with the last `i` positions punched out:
+
+```text
+11111111000
+        ↑
+      holes
+```
+
+When AND is applied, the holes erase the last `i` bits of the number.
+
+---
+
+# 8️⃣ Clear Bits in a Given Range
 
 ## 📌 Problem
 
-Clear bits in a given range.
+Given a number `n` and two indices `i` and `j`, clear (set to `0`) all bits from position `i` to `j` (inclusive).
 
 ---
 
-## 💡 Intuition
+## ⚡ Golden Trick
 
-Combine left and right masks.
+Create a bitmask having:
 
----
+```text
+1s before j
+0s from i to j
+1s after i
+```
 
-## ⚡ Logic
+Then perform an AND operation.
 
 ```java
-int a = (~0) << (j + 1);
-int b = (1 << i) - 1;
-int mask = a | b;
+n &bitmask
 ```
+
+---
+
+## 💻 Important Logic
+
+### Left Part of Mask
+
+```java
+(~0)<<(j +1)
+```
+
+### Right Part of Mask
+
+```java
+(1<<i)-1
+```
+
+### Combine Both Parts
+
+```java
+a |b
+```
+
+### Clear the Range
+
+```java
+n &bitmask
+```
+
+---
+
+## 🧠 Intuition
+
+To clear a range of bits, we need a mask that preserves everything except the target range.
+
+For example, if:
+
+```text
+i = 2
+j = 5
+```
+
+We want a mask like:
+
+```text
+11000011
+```
+
+Notice:
+
+```text
+Bits 5,4,3,2 → 0
+Remaining bits → 1
+```
+
+When AND is applied, only the bits in the specified range become `0`.
+
+---
+
+## 🪄 Dry Run
+
+### Input
+
+```text
+n = 255
+i = 2
+j = 5
+```
+
+### Binary Representation
+
+```text
+255 = 11111111
+```
+
+### Left Mask
+
+```text
+(~0) << (5 + 1)
+
+11000000
+```
+
+### Right Mask
+
+```text
+(1 << 2) - 1
+
+00000011
+```
+
+### Final Mask
+
+```text
+11000000
+00000011
+--------
+11000011
+```
+
+### Apply AND
+
+```text
+11111111
+11000011
+--------
+11000011
+```
+
+### Result
+
+```text
+195
+```
+
+---
+
+## ❌ Counter Example
+
+Using only:
+
+```java
+(~0)<<(j +1)
+```
+
+produces:
+
+```text
+11000000
+```
+
+This also clears bits below `i`, which is incorrect.
+
+We need the right-side mask to preserve those bits.
+
+---
+
+## 🔥 Why It Works
+
+The mask is divided into three regions:
+
+```text
+111111 | 0000 | 111
+```
+
+- Left `1`s preserve higher bits.
+- Middle `0`s clear the target range.
+- Right `1`s preserve lower bits.
+
+Since:
+
+```text
+x & 1 = x
+x & 0 = 0
+```
+
+only the bits from `i` to `j` get erased.
+
+---
+
+## ⚠️ Edge Cases
+
+### i = j
+
+Only one bit is cleared.
+
+### n = 0
+
+Result remains:
+
+```text
+0
+```
+
+### i = 0
+
+All bits from the least significant bit up to `j` are cleared.
+
+### j = 31 (for int)
+
+Be careful with shift operations on 32-bit integers.
+
+---
+
+## ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(1)       |
+| Space     | O(1)       |
+
+---
+
+## 🎓 Interview Takeaway
+
+Range-based bit clearing is usually solved by creating two masks:
+
+```text
+Left Mask  → Preserve higher bits
+Right Mask → Preserve lower bits
+```
+
+Combining them with OR creates a gap of zeros exactly where the bits need to be cleared.
+
+---
+
+## 🧩 Memory Trick
+
+Imagine building a bridge around the bits you want to destroy:
+
+```text
+111111   0000   111
+  Safe   Clear  Safe
+```
+
+The left and right sides protect the bits you want to keep, while the middle gap wipes out the selected range.
 
 ---
 
@@ -5210,45 +5606,304 @@ with Shifted 1
 
 ---
 
-# 1️⃣6️⃣ Fast Exponentiation
+# 1️⃣6️⃣ Fast Exponentiation (Binary Exponentiation)
 
 ## 📌 Problem
 
-Calculate aⁿ efficiently.
+Given a number `a` and a power `n`, calculate:
+
+```text
+aⁿ
+```
+
+efficiently without multiplying `a` exactly `n` times.
 
 ---
 
-## 💡 Intuition
+## ⚡ Golden Trick
 
-Use binary representation of exponent.
+Every number can be represented in binary.
+
+Instead of computing:
+
+```text
+a × a × a × a × ...
+```
+
+use the binary representation of the exponent and repeatedly square the base.
 
 ---
 
-## ⚡ Optimized Logic
+## 💻 Approach 1: My Method
+
+### Logic Snippet
 
 ```java
-while(n >0){
-        if((n &1)!=0){
-ans *=a;
-    }
-
-a *=a;
-n =n >>1;
+if(power %2==0){
+number *=number;
+power >>=1;
         }
+        else{
+mul *=number;
+power--;
+        }
+```
+
+### Idea
+
+- If the power is even, square the number and halve the power.
+- If the power is odd, multiply the answer by the current number and make the power even by subtracting 1.
+- Continue until power becomes 0.
+
+---
+
+## 💻 Approach 2: Standard Binary Exponentiation
+
+### Logic Snippet
+
+```java
+if((power &1)!=0){
+ans *=number;
+}
+
+number *=number;
+power >>=1;
+```
+
+### Idea
+
+- Check the last bit of the exponent.
+- If it is `1`, include the current power in the answer.
+- Square the base to generate the next power.
+- Right shift the exponent to process the next binary digit.
+
+---
+
+## 🧠 Intuition
+
+Suppose:
+
+```text
+3¹³
+```
+
+Binary representation of 13:
+
+```text
+1101₂
+```
+
+which means:
+
+```text
+13 = 8 + 4 + 1
+```
+
+Therefore:
+
+```text
+3¹³ = 3⁸ × 3⁴ × 3¹
+```
+
+The algorithm only multiplies the powers corresponding to set bits.
+
+---
+
+## 🪄 Dry Run
+
+### Input
+
+```text
+number = 3
+power = 13
+```
+
+### Binary Form
+
+```text
+13 = 1101₂
+```
+
+### Powers Generated
+
+```text
+3¹ = 3
+3² = 9
+3⁴ = 81
+3⁸ = 6561
+```
+
+### Required Powers
+
+```text
+1101₂
+ ↑↑ ↑
+
+3⁸ × 3⁴ × 3¹
+```
+
+### Result
+
+```text
+3 × 81 × 6561
+=
+1594323
 ```
 
 ---
 
-## 🧠 Why It Works
+## ❌ Brute Force Approach
 
-Each bit contributes power of 2.
+### Logic
+
+```text
+Multiply the number exactly n times.
+```
+
+Example:
+
+```text
+2¹⁰
+=
+2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2 × 2
+```
+
+This requires many unnecessary multiplications.
 
 ---
 
-## ⏱ Complexity
+## 🔥 Why It Works
 
-* Time: O(log n)
-* Space: O(1)
+Every exponent can be decomposed into powers of 2.
+
+Example:
+
+```text
+13 = 1101₂
+```
+
+```text
+13 = 8 + 4 + 1
+```
+
+Thus:
+
+```text
+a¹³ = a⁸ × a⁴ × a¹
+```
+
+The algorithm:
+
+1. Generates powers by squaring.
+2. Uses binary bits to decide which powers are needed.
+3. Multiplies only those powers.
+
+---
+
+## ⚠️ Edge Cases
+
+### Power = 0
+
+```text
+a⁰ = 1
+```
+
+### Base = 0
+
+```text
+0ⁿ = 0
+```
+
+for `n > 0`
+
+### Base = 1
+
+```text
+1ⁿ = 1
+```
+
+### Power = 1
+
+```text
+a¹ = a
+```
+
+---
+
+## 📊 Comparison
+
+| Approach                       | Time Complexity |
+|--------------------------------|-----------------|
+| Brute Force                    | O(n)            |
+| Your Approach                  | O(log n)        |
+| Standard Binary Exponentiation | O(log n)        |
+
+---
+
+## ⏱️ Complexity
+
+| Operation | Complexity |
+|-----------|------------|
+| Time      | O(log n)   |
+| Space     | O(1)       |
+
+---
+
+## 🎓 Interview Takeaway
+
+Fast Exponentiation is one of the most important applications of bit manipulation.
+
+The key observation is:
+
+```text
+Exponent → Binary Representation
+```
+
+and
+
+```text
+Repeated Squaring → Generate Powers of 2
+```
+
+Combining both reduces the complexity from:
+
+```text
+O(n)
+```
+
+to
+
+```text
+O(log n)
+```
+
+---
+
+## 🧩 Memory Trick
+
+Think of the exponent as a treasure map written in binary.
+
+```text
+13 = 1101₂
+```
+
+Each `1` says:
+
+```text
+"Pick this power."
+```
+
+Each step:
+
+```text
+Square the base
+↓
+Move to next bit
+↓
+Pick power if bit = 1
+```
+
+This allows us to reach huge powers using only a handful of operations.
 
 ---
 
