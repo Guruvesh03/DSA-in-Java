@@ -6568,6 +6568,289 @@ Always verify XOR behavior carefully.
 
 ---
 
+# 1️⃣9️⃣ Convert Uppercase Characters to Lowercase Using Bit Manipulation
+
+## 📌 Problem
+
+Convert uppercase English letters (`A-Z`) to lowercase (`a-z`) using Bit Manipulation instead of built-in string or
+character conversion methods.
+
+---
+
+## ⚡ Golden Trick
+
+The ASCII values of uppercase and lowercase letters differ by only **one bit**.
+
+### Logic Snippet
+
+```java
+ch |' '
+```
+
+---
+
+## 🧠 Intuition
+
+Let's compare the ASCII values of `'A'` and `'a'`:
+
+```text
+'A' = 65  = 01000001
+'a' = 97  = 01100001
+```
+
+Notice that only the **5th bit** (counting from right, zero-based) is different:
+
+```text
+01000001
+01100001
+   ↑
+```
+
+That bit is set in every lowercase letter.
+
+When we OR an uppercase letter with a space character (`' '`):
+
+```text
+' ' = 32 = 00100000
+```
+
+the required bit automatically becomes `1`, converting the character to lowercase.
+
+---
+
+## 💻 Important Logic
+
+### Convert to Lowercase
+
+```java
+ch |' '
+```
+
+### Equivalent Form
+
+```java
+ch |32
+```
+
+---
+
+## 🪄 Dry Run
+
+### Example
+
+#### Input
+
+```text
+'A'
+```
+
+#### Binary Representation
+
+```text
+'A' = 01000001
+' ' = 00100000
+```
+
+#### OR Operation
+
+```text
+01000001
+00100000
+---------
+01100001
+```
+
+#### Result
+
+```text
+'a'
+```
+
+---
+
+### Another Example
+
+#### Input
+
+```text
+'D'
+```
+
+#### Binary
+
+```text
+'D' = 01000100
+' ' = 00100000
+```
+
+#### OR Operation
+
+```text
+01000100
+00100000
+---------
+01100100
+```
+
+#### Result
+
+```text
+'d'
+```
+
+---
+
+## ❌ Brute Force Approach
+
+Use built-in methods such as:
+
+```java
+Character.toLowerCase(ch)
+```
+
+or
+
+```java
+String.toLowerCase()
+```
+
+These are easier to use but hide the bit-level trick.
+
+---
+
+## 🔥 Why It Works
+
+ASCII stores uppercase and lowercase letters in a very clever way.
+
+### Uppercase
+
+```text
+A = 01000001
+B = 01000010
+C = 01000011
+```
+
+### Lowercase
+
+```text
+a = 01100001
+b = 01100010
+c = 01100011
+```
+
+Only one bit changes:
+
+```text
+00100000
+```
+
+OR operation guarantees that this bit becomes `1`.
+
+Since:
+
+```text
+0 | 1 = 1
+1 | 1 = 1
+```
+
+the character is converted to lowercase.
+
+---
+
+## ⚠️ Edge Cases
+
+### Character Already Lowercase
+
+```text
+'a' | ' '
+=
+'a'
+```
+
+No change occurs.
+
+### Digits
+
+```text
+'5' | ' '
+```
+
+Produces an unexpected result.
+
+This trick should only be used for English alphabetic characters.
+
+### Special Symbols
+
+The trick is designed specifically for ASCII letters and may not work as expected for symbols.
+
+---
+
+## ⏱️ Complexity
+
+| Operation | Complexity         |
+|-----------|--------------------|
+| Time      | O(1) per character |
+| Space     | O(1)               |
+
+For all 26 letters:
+
+| Operation | Complexity   |
+|-----------|--------------|
+| Time      | O(26) ≈ O(1) |
+| Space     | O(1)         |
+
+---
+
+## 🎓 Interview Takeaway
+
+ASCII uppercase and lowercase letters differ by exactly:
+
+```text
+32
+```
+
+or
+
+```text
+00100000
+```
+
+Therefore:
+
+```java
+ch |' '
+```
+
+sets the lowercase bit and converts an uppercase letter into its lowercase counterpart without using built-in functions.
+
+---
+
+## 🧩 Memory Trick
+
+Think of the space character as a **Lowercase Switch**:
+
+```text
+' ' = 00100000
+```
+
+Whenever you OR a letter with this switch:
+
+```text
+A → a
+B → b
+C → c
+```
+
+because the lowercase bit gets turned ON.
+
+```java
+ch |' '
+```
+
+✅ Turn ON lowercase bit  
+✅ Preserve all other bits  
+✅ Instantly convert uppercase to lowercase
+
 # 📊 Complexity Cheatsheet
 
 | Operation           | Time Complexity |
