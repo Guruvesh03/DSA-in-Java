@@ -855,26 +855,6 @@ protecting data (encapsulation)? Is this about reuse (inheritance), or about fle
 
 ---
 
-## ✅ Next Steps
-
-Once this chapter feels solid, continue with:
-
-- 🏗️ Constructors (default, parameterized, copy, constructor chaining)
-- 🔑 Access Modifiers in depth (`private`, `default`, `protected`, `public`)
-- 🔄 `this` vs `super`
-- 🎭 Interfaces vs Abstract Classes (deep dive)
-- ⚙️ `static` vs instance members
-- 🧬 Object class methods (`equals()`, `hashCode()`, `toString()`)
-
-<div align="center">
-
-> 📌 **Keep this file as your Chapter 1 revision sheet.**
-> Re-read **Chapter 7** and **Chapter 8** the night before any interview.
-
-⭐ *If this helped you, consider starring the repo for quick future access.*
-
-</div>
-
 <div align="center">
 
 # 📚 Java OOP Mastery
@@ -1011,7 +991,8 @@ classDiagram
 
 > ⚠️ **Common Mistake**
 > Students often think *"defining a class uses memory for its fields."* It does **not**. A class declaration only
-> registers structure with the JVM (in an area called the **Method Area / Metaspace**). Memory for actual field values is
+> registers structure with the JVM (in an area called the **Method Area / Metaspace**). Memory for actual field values
+> is
 > allocated **only when an object is created** — covered in detail in section 2.4.
 
 > 📝 **Quick Revision — 2.1**
@@ -1215,7 +1196,8 @@ STACK                          HEAP
 > 🎯 **Placement Tip**
 > If asked *"What is the exact sequence of memory events when an object is created?"* — always mention: **(1)** heap
 > allocation, **(2)** default value initialization, **(3)** constructor execution, **(4)** reference returned to stack —
-> in that order. Interviewers specifically check if you know default-value initialization happens *before* the constructor
+> in that order. Interviewers specifically check if you know default-value initialization happens *before* the
+> constructor
 > body.
 
 > 📝 **Quick Revision — 2.4**
@@ -1384,7 +1366,8 @@ public class Main {
 
 > 🔥 **Interview Insight**
 > "Is the default constructor the same as a no-argument constructor you write yourself?" — **Not quite.** A "default
-> constructor" specifically refers to the one the **compiler auto-generates** when you write none. If *you* manually write
+> constructor" specifically refers to the one the **compiler auto-generates** when you write none. If *you* manually
+> write
 > a no-argument constructor, it's technically called a "no-arg constructor," not a "default constructor" — though they
 > behave similarly.
 
@@ -1569,7 +1552,8 @@ class Student {
 > }
 > ```
 > Without `this.`, Java resolves `name = name` as the **local parameter** being assigned to itself — the instance
-> variable `name` is **never touched**, silently staying `null`. This is one of the most common real bugs in beginner Java
+> variable `name` is **never touched**, silently staying `null`. This is one of the most common real bugs in beginner
+> Java
 > code.
 
 ### 🧠 Memory Perspective
@@ -1756,7 +1740,8 @@ public class Main {
 
 > 🔥 **Interview Insight**
 > "Does Java have a built-in copy constructor?" — **No.** Unlike C++, Java leaves copying entirely up to the developer —
-> via a manually written copy constructor, the `clone()` method, or third-party utilities. This is a frequently asked trap
+> via a manually written copy constructor, the `clone()` method, or third-party utilities. This is a frequently asked
+> trap
 > question.
 
 > 📝 **Quick Revision — 2.11**
@@ -2039,7 +2024,8 @@ use a library like Apache Commons or Gson for JSON-based deep cloning.
 > Interviewers love combining shallow copy + reference assignment in one tricky question: *"If I do `Student s2 = s1;`
 and then modify `s2.name`, does `s1.name` change too?"* — **Yes**, because `s2` and `s1` are literally the same object (
 > no copying happened at all — that's just reference assignment, not even a shallow copy). Don't confuse plain reference
-> assignment with shallow copying — they are different concepts that interviewers intentionally blur together to test real
+> assignment with shallow copying — they are different concepts that interviewers intentionally blur together to test
+> real
 > understanding.
 
 ---
@@ -2090,14 +2076,3 @@ and then modify `s2.name`, does `s1.name` change too?"* — **Yes**, because `s2
 - `Object.clone()` is shallow by default — deep copying must be implemented manually.
 
 ---
-
-<div align="center">
-
-> 📌 **Keep this file as your Chapter 2 revision sheet.**
-> Re-read **Section 2.15** and the **Chapter Summary** the night before any interview.
-
-➡️ **Next Chapter:** [README-03-Encapsulation-Access-Modifiers.md] — *Encapsulation & Access Modifiers*
-
-⭐ *If this helped you, consider starring the repo for quick future access.*
-
-</div>
