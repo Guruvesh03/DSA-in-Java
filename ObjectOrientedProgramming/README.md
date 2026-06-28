@@ -3366,15 +3366,27 @@ Imagine modeling employees at a company without inheritance:
 class Manager {
     String name;
     double salary;
-    void work() { System.out.println(name + " is managing the team"); }
-    void takeLeave() { System.out.println(name + " applied for leave"); }
+
+    void work() {
+        System.out.println(name + " is managing the team");
+    }
+
+    void takeLeave() {
+        System.out.println(name + " applied for leave");
+    }
 }
 
 class Developer {
     String name;          // 🔁 duplicated
     double salary;        // 🔁 duplicated
-    void work() { System.out.println(name + " is writing code"); }
-    void takeLeave() { System.out.println(name + " applied for leave"); }  // 🔁 duplicated, identical
+
+    void work() {
+        System.out.println(name + " is writing code");
+    }
+
+    void takeLeave() {
+        System.out.println(name + " applied for leave");
+    }  // 🔁 duplicated, identical
 }
 ```
 
@@ -3392,15 +3404,22 @@ let me define the shared part once, and let each class add only what's unique to
 class Employee {
     String name;
     double salary;
-    void takeLeave() { System.out.println(name + " applied for leave"); }
+
+    void takeLeave() {
+        System.out.println(name + " applied for leave");
+    }
 }
 
 class Manager extends Employee {
-    void work() { System.out.println(name + " is managing the team"); }
+    void work() {
+        System.out.println(name + " is managing the team");
+    }
 }
 
 class Developer extends Employee {
-    void work() { System.out.println(name + " is writing code"); }
+    void work() {
+        System.out.println(name + " is writing code");
+    }
 }
 ```
 
@@ -3464,7 +3483,8 @@ ASCII Diagram — IS-A Relationship
 
 > ⚠️ **Common Mistake**
 > Using inheritance for a relationship that isn't truly "is-a." For example, `class Engine extends Car` is wrong — an
-> Engine is **not a kind of** Car; an Engine is *part of* a Car. That's a HAS-A relationship, and belongs in Composition (
+> Engine is **not a kind of** Car; an Engine is *part of* a Car. That's a HAS-A relationship, and belongs in
+> Composition (
 > covered in 4.9), not inheritance.
 
 ### 💻 Basic Syntax
@@ -3482,8 +3502,8 @@ class Manager extends Employee {    // subclass — "extends" keyword establishe
 
 ```java
 Manager m = new Manager();
-m.name = "Alice";        // inherited field, accessible directly
-m.department = "Sales";  // Manager's own field
+m.name ="Alice";        // inherited field, accessible directly
+m.department ="Sales";  // Manager's own field
 ```
 
 ### ⚡ Advantages
@@ -3528,11 +3548,15 @@ ASCII Diagram — Single-Level
 
 ```java
 class Employee {
-    void work() { System.out.println("Working"); }
+    void work() {
+        System.out.println("Working");
+    }
 }
 
 class Manager extends Employee {
-    void approveLeave() { System.out.println("Leave approved"); }
+    void approveLeave() {
+        System.out.println("Leave approved");
+    }
 }
 ```
 
@@ -3556,23 +3580,35 @@ ASCII Diagram — Multilevel
 
 ```java
 class Employee {
-    void work() { System.out.println("Working"); }
+    void work() {
+        System.out.println("Working");
+    }
 }
 
 class Manager extends Employee {
-    void approveLeave() { System.out.println("Leave approved"); }
+    void approveLeave() {
+        System.out.println("Leave approved");
+    }
 }
 
 class SeniorManager extends Manager {
-    void setStrategy() { System.out.println("Setting team strategy"); }
+    void setStrategy() {
+        System.out.println("Setting team strategy");
+    }
 }
 ```
 
 ```java
 SeniorManager sm = new SeniorManager();
-sm.work();          // from Employee (2 levels up)
-sm.approveLeave();  // from Manager (1 level up)
-sm.setStrategy();   // its own method
+sm.
+
+work();          // from Employee (2 levels up)
+sm.
+
+approveLeave();  // from Manager (1 level up)
+sm.
+
+setStrategy();   // its own method
 ```
 
 > 💡 **Important**
@@ -3596,12 +3632,19 @@ ASCII Diagram — Hierarchical
 
 ```java
 class Employee {
-    void work() { System.out.println("Working"); }
+    void work() {
+        System.out.println("Working");
+    }
 }
 
-class Manager extends Employee { }
-class Developer extends Employee { }
-class Tester extends Employee { }
+class Manager extends Employee {
+}
+
+class Developer extends Employee {
+}
+
+class Tester extends Employee {
+}
 ```
 
 Each subclass shares the common `Employee` logic but can specialize independently — changes to `Manager` don't affect
@@ -3615,10 +3658,20 @@ Each subclass shares the common `Employee` logic but can specialize independentl
 allow this with classes.**
 
 ```java
-class A { void show() { System.out.println("A"); } }
-class B { void show() { System.out.println("B"); } }
+class A {
+    void show() {
+        System.out.println("A");
+    }
+}
 
-class C extends A, B { }   // ❌ COMPILE ERROR — Java does not allow this
+class B {
+    void show() {
+        System.out.println("B");
+    }
+}
+
+class C extends A, B {
+}   // ❌ COMPILE ERROR — Java does not allow this
 ```
 
 ### ❓ Why Java Doesn't Support Multiple Inheritance (with Classes)
@@ -3667,12 +3720,22 @@ Java allows a class to **implement multiple interfaces**, because interfaces (tr
 state — only method *contracts*.
 
 ```java
-interface Flyable { void fly(); }
-interface Swimmable { void swim(); }
+interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
 
 class Duck implements Flyable, Swimmable {   // ✅ multiple interfaces allowed
-    public void fly() { System.out.println("Duck flying"); }
-    public void swim() { System.out.println("Duck swimming"); }
+    public void fly() {
+        System.out.println("Duck flying");
+    }
+
+    public void swim() {
+        System.out.println("Duck swimming");
+    }
 }
 ```
 
@@ -3754,6 +3817,7 @@ new Manager()
 ```java
 class Employee {
     String name;
+
     Employee(String name) {
         this.name = name;
         System.out.println("Employee constructor: " + name);
@@ -3762,6 +3826,7 @@ class Employee {
 
 class Manager extends Employee {
     String department;
+
     Manager(String name, String department) {
         super(name);                 // explicitly calls Employee's constructor
         this.department = department;
@@ -3818,7 +3883,9 @@ class Manager extends Employee {
 
 ```java
 class Employee {
-    void work() { System.out.println("Employee is working"); }
+    void work() {
+        System.out.println("Employee is working");
+    }
 }
 
 class Manager extends Employee {
@@ -3876,13 +3943,18 @@ inside the subclass.
 
 ```java
 class Employee {
-    public void work() { System.out.println("Working"); }
+    public void work() {
+        System.out.println("Working");
+    }
 }
 
-class Manager extends Employee { }   // no methods written here
+class Manager extends Employee {
+}   // no methods written here
 
 Manager m = new Manager();
-m.work();   // ✅ inherited and callable directly
+m.
+
+work();   // ✅ inherited and callable directly
 ```
 
 ### ⚡ Access Modifier Effects on Inheritance
@@ -3901,16 +3973,23 @@ type**, at compile-time, not the actual object type.
 
 ```java
 class Employee {
-    static void policy() { System.out.println("Employee policy"); }
+    static void policy() {
+        System.out.println("Employee policy");
+    }
 }
+
 class Manager extends Employee {
-    static void policy() { System.out.println("Manager policy"); }   // hides, not overrides
+    static void policy() {
+        System.out.println("Manager policy");
+    }   // hides, not overrides
 }
 ```
 
 ```java
 Employee e = new Manager();
-e.policy();   // prints "Employee policy" — decided by reference TYPE (Employee), not actual object
+e.
+
+policy();   // prints "Employee policy" — decided by reference TYPE (Employee), not actual object
 ```
 
 ### ⚡ Final Methods
@@ -3919,8 +3998,11 @@ A method marked `final` in the parent **cannot be overridden** by any subclass a
 
 ```java
 class Employee {
-    final void getEmployeeId() { System.out.println("EMP-001"); }
+    final void getEmployeeId() {
+        System.out.println("EMP-001");
+    }
 }
+
 class Manager extends Employee {
     // void getEmployeeId() { }   ❌ Compile Error — cannot override a final method
 }
@@ -3965,6 +4047,7 @@ dispatch at all.
 class Employee {
     String designation = "Employee";
 }
+
 class Manager extends Employee {
     String designation = "Manager";   // hides parent's field
 }
@@ -3972,8 +4055,12 @@ class Manager extends Employee {
 
 ```java
 Employee e = new Manager();
-System.out.println(e.designation);          // "Employee" — reference TYPE decides
-System.out.println(((Manager) e).designation); // "Manager" — after explicit cast
+System.out.
+
+println(e.designation);          // "Employee" — reference TYPE decides
+System.out.
+
+println(((Manager) e).designation); // "Manager" — after explicit cast
 ```
 
 ### ⚖️ Variable Hiding vs Method Overriding
@@ -4031,10 +4118,13 @@ and `equals()`-based comparisons to work on **any** object whatsoever.
 | `hashCode()`       | Produces an integer used by hash-based collections like `HashMap` |
 
 ```java
-class Employee { }
+class Employee {
+}
 
 Employee e = new Employee();
-System.out.println(e);   // calls Object's default toString() → something like "Employee@1b6d3586"
+System.out.
+
+println(e);   // calls Object's default toString() → something like "Employee@1b6d3586"
 ```
 
 > 💡 **Important**
@@ -4070,7 +4160,9 @@ ASCII Diagram — Composition (HAS-A)
 
 ```java
 class Engine {
-    void start() { System.out.println("Engine starting"); }
+    void start() {
+        System.out.println("Engine starting");
+    }
 }
 
 class Car {
@@ -4151,7 +4243,10 @@ class Employee {
         logStart();
         System.out.println("Working");
     }
-    void logStart() { System.out.println("Start logged"); }
+
+    void logStart() {
+        System.out.println("Start logged");
+    }
 }
 
 class Manager extends Employee {
@@ -4160,7 +4255,10 @@ class Manager extends Employee {
         System.out.println("Manager-specific log");
         sendNotification();   // assumes this is always safe to call here
     }
-    void sendNotification() { System.out.println("Notification sent"); }
+
+    void sendNotification() {
+        System.out.println("Notification sent");
+    }
 }
 ```
 
@@ -4227,11 +4325,15 @@ Use `class Dog extends Animal` and simply call both `eat()` and `bark()` on a `D
 
 ```java
 class Animal {
-    void eat() { System.out.println("Animal is eating"); }
+    void eat() {
+        System.out.println("Animal is eating");
+    }
 }
 
 class Dog extends Animal {
-    void bark() { System.out.println("Dog is barking"); }
+    void bark() {
+        System.out.println("Dog is barking");
+    }
 }
 
 public class Main {
@@ -4264,18 +4366,33 @@ constructor and observe the order.
 
 ```java
 class Vehicle {
-    Vehicle() { System.out.println("Vehicle created"); }
-    void move() { System.out.println("Vehicle moving"); }
+    Vehicle() {
+        System.out.println("Vehicle created");
+    }
+
+    void move() {
+        System.out.println("Vehicle moving");
+    }
 }
 
 class Car extends Vehicle {
-    Car() { System.out.println("Car created"); }
-    void honk() { System.out.println("Car honking"); }
+    Car() {
+        System.out.println("Car created");
+    }
+
+    void honk() {
+        System.out.println("Car honking");
+    }
 }
 
 class ElectricCar extends Car {
-    ElectricCar() { System.out.println("ElectricCar created"); }
-    void chargeBattery() { System.out.println("Charging battery"); }
+    ElectricCar() {
+        System.out.println("ElectricCar created");
+    }
+
+    void chargeBattery() {
+        System.out.println("Charging battery");
+    }
 }
 
 public class Main {
@@ -4453,14 +4570,3 @@ automatically chosen at runtime" behavior is not magic — it's **Polymorphism**
 how and why this works.
 
 ---
-
-<div align="center">
-
-> 📌 **Keep this file as your Chapter 4 revision sheet.**
-> Re-read **Section 4.12** and the **Chapter Wrap-Up** the night before any interview.
-
-➡️ **Next Chapter:** README-05-Polymorphism.md — *Polymorphism*
-
-⭐ *If this helped you, consider starring the repo for quick future access.*
-
-</div>
