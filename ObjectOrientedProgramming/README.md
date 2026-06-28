@@ -2212,7 +2212,8 @@ request.
 
 > 🧠 **Real-World Analogy**
 > A **vending machine**: you never reach inside and grab a snack directly. You insert money and press a button (the
-> public interface) — the machine's internal mechanism (private logic) decides whether to dispense the item, give change,
+> public interface) — the machine's internal mechanism (private logic) decides whether to dispense the item, give
+> change,
 > or reject your request. You interact *through* a controlled interface, never directly with the internals.
 
 ### 🏗️ Internal Working
@@ -2704,7 +2705,8 @@ class Student {
 
 > ⚠️ **Common Mistake**
 > Auto-generating a getter **and** setter for *every single field* without thinking. A `setBalance()` method that lets
-> anyone set any value defeats the entire purpose of encapsulation — sometimes the right setter is **no setter at all** (
+> anyone set any value defeats the entire purpose of encapsulation — sometimes the right setter is **no setter at all
+** (
 > see 3.6 and 3.10).
 
 > 📝 **Quick Revision — 3.5**
@@ -2765,7 +2767,8 @@ class Employee {
 > 🎯 **Placement Tip**
 > If asked *"Where should validation logic live — in the setter, or in the calling code?"* — the strong answer is: **in
 the setter (or constructor)**, because that guarantees the rule is enforced **everywhere**, no matter who calls it or
-> how many places in the codebase create/modify this object. Relying on every caller to "remember" to validate is fragile
+> how many places in the codebase create/modify this object. Relying on every caller to "remember" to validate is
+> fragile
 > and will eventually be forgotten somewhere.
 
 > 📝 **Quick Revision — 3.6**
@@ -3295,3 +3298,1169 @@ common behavior while specializing their own. That relationship — reusing and 
 classes — is exactly what **Inheritance** is built for, and it's where we go next.
 
 ---
+
+<div align="center">
+
+# 📚 Java OOP Mastery
+
+## Chapter 4: Inheritance
+
+### From Absolute Beginner → Placement Ready
+
+![Java](https://img.shields.io/badge/Language-Java-orange?style=flat-square)
+![Level](https://img.shields.io/badge/Level-Beginner%20to%20Placement-blue?style=flat-square)
+![Chapter](https://img.shields.io/badge/Chapter-4%20of%20Series-purple?style=flat-square)
+
+</div>
+
+---
+
+## ⏪ Recap: Chapter 3 — Encapsulation & Access Modifiers
+
+> A 60-second refresher before we go deeper:
+>
+> - **Encapsulation** bundles data + behavior into a class and restricts direct access to that data.
+> - **Data hiding** (mainly via `private`) is the specific tool that makes encapsulation real.
+> - The four access modifiers — `private`, default, `protected`, `public` — control visibility in increasing order.
+> - `protected` exists specifically so that **subclasses**, even in other packages, can access certain inherited
+    members.
+> - **Getters/setters** give controlled, validated access to private data; **immutable objects** never change after
+    construction.
+
+### 🤔 Why Inheritance Is the Next Logical Step
+
+Notice that `protected` access only made sense once we mentioned the word **subclass**. Chapter 3 quietly assumed you
+already understood parent-child class relationships — but we never formally built that idea. Encapsulation taught you
+how **one class** protects itself. Inheritance teaches you how **families of related classes** share and extend
+behavior, without duplicating code or breaking that protection. It's the natural next pillar to study.
+
+---
+
+## 🗺️ Table of Contents
+
+| #    | Section                                                       |
+|------|---------------------------------------------------------------|
+| 4.1  | [Why Inheritance?](#41--why-inheritance)                      |
+| 4.2  | [Understanding Inheritance](#42--understanding-inheritance)   |
+| 4.3  | [Types of Inheritance](#43--types-of-inheritance)             |
+| 4.4  | [Constructor Inheritance](#44--constructor-inheritance)       |
+| 4.5  | [The `super` Keyword](#45--the-super-keyword)                 |
+| 4.6  | [Method Inheritance](#46--method-inheritance)                 |
+| 4.7  | [Variable Hiding](#47--variable-hiding)                       |
+| 4.8  | [Object Class Hierarchy](#48--object-class-hierarchy)         |
+| 4.9  | [Composition vs Inheritance](#49--composition-vs-inheritance) |
+| 4.10 | [Best Practices](#410--best-practices)                        |
+| 4.11 | [Practice Section](#411--practice-section)                    |
+| 4.12 | [Interview Section](#412--interview-section)                  |
+| —    | [Chapter Wrap-Up](#-chapter-wrap-up)                          |
+
+---
+
+## 4.1 — 🚨 Why Inheritance?
+
+### 📌 Problems Before Inheritance
+
+Imagine modeling employees at a company without inheritance:
+
+```java
+class Manager {
+    String name;
+    double salary;
+    void work() { System.out.println(name + " is managing the team"); }
+    void takeLeave() { System.out.println(name + " applied for leave"); }
+}
+
+class Developer {
+    String name;          // 🔁 duplicated
+    double salary;        // 🔁 duplicated
+    void work() { System.out.println(name + " is writing code"); }
+    void takeLeave() { System.out.println(name + " applied for leave"); }  // 🔁 duplicated, identical
+}
+```
+
+`name`, `salary`, and `takeLeave()` are copy-pasted across every employee type. Now imagine 20 employee types — and HR
+policy changes how leave is calculated. You must fix it in **20 different places**, and you will inevitably miss one.
+
+### ❓ Why Inheritance Was Introduced
+
+Java needed a way to say: *"These classes are fundamentally the same kind of thing, with small specialized differences —
+let me define the shared part once, and let each class add only what's unique to it."*
+
+### ⚡ Code Reusability
+
+```java
+class Employee {
+    String name;
+    double salary;
+    void takeLeave() { System.out.println(name + " applied for leave"); }
+}
+
+class Manager extends Employee {
+    void work() { System.out.println(name + " is managing the team"); }
+}
+
+class Developer extends Employee {
+    void work() { System.out.println(name + " is writing code"); }
+}
+```
+
+Now `name`, `salary`, and `takeLeave()` exist in **exactly one place** — `Employee`. Both `Manager` and `Developer` get
+it for free.
+
+### 🧩 Extensibility
+
+Adding a new employee type (`Intern`, `Tester`) requires **zero changes** to existing classes — you simply write
+`class Intern extends Employee { ... }` and inherit everything that's already proven to work.
+
+### 🛠️ Maintainability
+
+If HR changes how leave works, you fix `takeLeave()` **once**, inside `Employee` — every subclass automatically gets the
+updated behavior the next time the program runs.
+
+### 🌍 Real-World Motivation
+
+> 🧠 **Real-World Analogy**
+> Think of a **species hierarchy** in biology. A "Dog" and a "Cat" are both "Mammals" — they share traits (warm-blooded,
+> has fur, breathes air) defined once at the Mammal level, while each adds its own specific behavior (Dog barks, Cat
+> purrs). Nature doesn't redefine "warm-blooded" separately for every species — and neither should your code.
+
+> 📝 **Quick Revision — 4.1**
+> - Without inheritance: duplicated fields/methods across similar classes → maintenance nightmare
+> - Inheritance solves: code reuse, extensibility (add new subclasses freely), and centralized maintenance
+> - Define shared behavior once, in a common parent class
+
+---
+
+## 4.2 — 🌳 Understanding Inheritance
+
+### 📌 Definition
+
+> **Inheritance** is an OOP mechanism where one class (the **subclass**) acquires the fields and methods of another
+> class (the **superclass**), enabling code reuse and modeling of "is-a" relationships.
+
+### ⚡ Key Terms
+
+| Term           | Also Called                | Meaning                                       |
+|----------------|----------------------------|-----------------------------------------------|
+| **Superclass** | Parent class, Base class   | The class being inherited *from*              |
+| **Subclass**   | Child class, Derived class | The class that inherits *from* the superclass |
+
+### 🔗 IS-A Relationship
+
+Inheritance models the question: **"Is a `Manager` an `Employee`?"** — Yes. So `Manager` can correctly
+`extends Employee`.
+
+```
+ASCII Diagram — IS-A Relationship
+
+        Employee
+       (superclass)
+           ▲
+           │  "is-a"
+           │
+        Manager
+       (subclass)
+```
+
+> ⚠️ **Common Mistake**
+> Using inheritance for a relationship that isn't truly "is-a." For example, `class Engine extends Car` is wrong — an
+> Engine is **not a kind of** Car; an Engine is *part of* a Car. That's a HAS-A relationship, and belongs in Composition (
+> covered in 4.9), not inheritance.
+
+### 💻 Basic Syntax
+
+```java
+class Employee {                    // superclass
+    String name;
+    double salary;
+}
+
+class Manager extends Employee {    // subclass — "extends" keyword establishes inheritance
+    String department;
+}
+```
+
+```java
+Manager m = new Manager();
+m.name = "Alice";        // inherited field, accessible directly
+m.department = "Sales";  // Manager's own field
+```
+
+### ⚡ Advantages
+
+| Advantage               | Explanation                                             |
+|-------------------------|---------------------------------------------------------|
+| Code reuse              | Shared logic written once, used by many subclasses      |
+| Extensibility           | New subclasses added without touching existing code     |
+| Natural modeling        | Mirrors real-world categorization (is-a relationships)  |
+| Polymorphism foundation | Makes runtime polymorphism possible (Chapter 5 preview) |
+
+### ⚡ Limitations
+
+| Limitation                 | Explanation                                                                |
+|----------------------------|----------------------------------------------------------------------------|
+| Tight coupling             | Subclasses depend heavily on superclass internals                          |
+| Fragile Base Class Problem | Changing the parent can silently break every subclass (see 4.10)           |
+| Forced hierarchy           | Real-world relationships don't always fit cleanly into strict "is-a" trees |
+| Single inheritance limit   | Java classes can extend only one superclass directly                       |
+
+> 📝 **Quick Revision — 4.2**
+> - Superclass = parent, Subclass = child, relationship = IS-A
+> - `extends` keyword establishes inheritance in Java
+> - Powerful, but introduces coupling — use only for genuine IS-A relationships
+
+---
+
+## 4.3 — 🌲 Types of Inheritance
+
+### 🔹 Single-Level Inheritance
+
+One subclass inherits from exactly one superclass.
+
+```
+ASCII Diagram — Single-Level
+
+      Employee
+         │
+         ▼
+       Manager
+```
+
+```java
+class Employee {
+    void work() { System.out.println("Working"); }
+}
+
+class Manager extends Employee {
+    void approveLeave() { System.out.println("Leave approved"); }
+}
+```
+
+---
+
+### 🔹 Multilevel Inheritance
+
+A chain — a subclass becomes the superclass for another subclass.
+
+```
+ASCII Diagram — Multilevel
+
+      Employee
+         │
+         ▼
+       Manager
+         │
+         ▼
+   SeniorManager
+```
+
+```java
+class Employee {
+    void work() { System.out.println("Working"); }
+}
+
+class Manager extends Employee {
+    void approveLeave() { System.out.println("Leave approved"); }
+}
+
+class SeniorManager extends Manager {
+    void setStrategy() { System.out.println("Setting team strategy"); }
+}
+```
+
+```java
+SeniorManager sm = new SeniorManager();
+sm.work();          // from Employee (2 levels up)
+sm.approveLeave();  // from Manager (1 level up)
+sm.setStrategy();   // its own method
+```
+
+> 💡 **Important**
+> A `SeniorManager` object inherits **everything** down the entire chain — not just from its immediate parent. The JVM
+> walks up the full hierarchy until it finds the method.
+
+---
+
+### 🔹 Hierarchical Inheritance
+
+Multiple subclasses inherit from the **same** single superclass.
+
+```
+ASCII Diagram — Hierarchical
+
+              Employee
+             /    |     \
+            ▼     ▼      ▼
+        Manager Developer Tester
+```
+
+```java
+class Employee {
+    void work() { System.out.println("Working"); }
+}
+
+class Manager extends Employee { }
+class Developer extends Employee { }
+class Tester extends Employee { }
+```
+
+Each subclass shares the common `Employee` logic but can specialize independently — changes to `Manager` don't affect
+`Developer` or `Tester`.
+
+---
+
+### 🚫 Multiple Inheritance (Using Classes)
+
+**Multiple inheritance** means one class inheriting from **two or more** superclasses simultaneously. Java **does not
+allow this with classes.**
+
+```java
+class A { void show() { System.out.println("A"); } }
+class B { void show() { System.out.println("B"); } }
+
+class C extends A, B { }   // ❌ COMPILE ERROR — Java does not allow this
+```
+
+### ❓ Why Java Doesn't Support Multiple Inheritance (with Classes)
+
+### 💎 The Diamond Problem
+
+```
+ASCII Diagram — The Diamond Problem
+
+            A
+          (show())
+          /      \
+         ▼        ▼
+        B          C
+    (show())   (show())
+         \        /
+          ▼      ▼
+            D
+   D extends B, C  --> which show() does D inherit?? ❌ AMBIGUOUS
+```
+
+If both `B` and `C` override `show()` differently, and `D` inherits from both, the compiler has **no reliable way** to
+decide which version `D` should get. This ambiguity is called the **Diamond Problem**, and Java sidesteps it entirely by
+**disallowing multiple inheritance of classes**.
+
+### 🧬 Hybrid Inheritance
+
+Hybrid inheritance is a **combination** of two or more types above (e.g., hierarchical + multilevel together). Java
+classes can freely form hybrid structures, **as long as** no single class tries to extend more than one class directly.
+
+```
+ASCII Diagram — Hybrid (Hierarchical + Multilevel)
+
+           Employee
+          /        \
+         ▼          ▼
+     Manager     Developer
+        │
+        ▼
+  SeniorManager
+```
+
+### 🔌 How Interfaces Solve Multiple Inheritance
+
+Java allows a class to **implement multiple interfaces**, because interfaces (traditionally) don't carry conflicting
+state — only method *contracts*.
+
+```java
+interface Flyable { void fly(); }
+interface Swimmable { void swim(); }
+
+class Duck implements Flyable, Swimmable {   // ✅ multiple interfaces allowed
+    public void fly() { System.out.println("Duck flying"); }
+    public void swim() { System.out.println("Duck swimming"); }
+}
+```
+
+> 💡 **Important**
+> Even with `default` methods in interfaces (Java 8+), if two interfaces provide **conflicting default implementations
+**, Java forces the implementing class to **explicitly override** the method and resolve the conflict itself — the
+> ambiguity is never silently auto-resolved like the Diamond Problem would require.
+
+> 📝 **Quick Revision — 4.3**
+> - Single-level → one parent, one child
+> - Multilevel → a chain of inheritance
+> - Hierarchical → many children, one shared parent
+> - Multiple inheritance of classes → not allowed in Java (Diamond Problem)
+> - Multiple inheritance of *type* → allowed via interfaces
+
+---
+
+## 4.4 — 🏗️ Constructor Inheritance
+
+### 📌 Constructor Execution Order
+
+> 💡 **Important**
+> Constructors are **not inherited**, but every subclass constructor **automatically calls its parent's constructor
+first**, before running its own body — even if you never write `super()` explicitly.
+
+### 🏗️ Why Parent Constructor Executes First
+
+It must — a subclass object is built **on top of** its parent's structure. The parent's fields must be fully initialized
+**before** the subclass adds its own specialized data; otherwise, the subclass might rely on half-built parent state.
+
+### 💻 Java Example
+
+```java
+class Employee {
+    Employee() {
+        System.out.println("1. Employee constructor running");
+    }
+}
+
+class Manager extends Employee {
+    Manager() {
+        System.out.println("2. Manager constructor running");
+    }
+}
+```
+
+```java
+Manager m = new Manager();
+// Output:
+// 1. Employee constructor running
+// 2. Manager constructor running
+```
+
+### 🏗️ Memory Flow During Object Creation
+
+```
+ASCII Diagram — Constructor Flow
+
+new Manager()
+     │
+     ▼
+[Step 1] JVM allocates heap memory for the FULL object (Employee part + Manager part)
+     │
+     ▼
+[Step 2] Manager's constructor begins, but its FIRST action is implicitly calling super()
+     │
+     ▼
+[Step 3] Employee's constructor runs completely, initializing Employee's fields
+     │
+     ▼
+[Step 4] Control returns to Manager's constructor, which now runs ITS OWN body
+     │
+     ▼
+[Step 5] Fully initialized Manager object ready, reference returned to caller
+```
+
+### 🔗 Constructor Chaining Across Inheritance
+
+```java
+class Employee {
+    String name;
+    Employee(String name) {
+        this.name = name;
+        System.out.println("Employee constructor: " + name);
+    }
+}
+
+class Manager extends Employee {
+    String department;
+    Manager(String name, String department) {
+        super(name);                 // explicitly calls Employee's constructor
+        this.department = department;
+        System.out.println("Manager constructor: " + department);
+    }
+}
+```
+
+```java
+Manager m = new Manager("Alice", "Sales");
+// Output:
+// Employee constructor: Alice
+// Manager constructor: Sales
+```
+
+> ⚠️ **Common Mistake**
+> Assuming that if `Employee` has **no** no-argument constructor (only a parameterized one), `Manager`'s constructor
+> will still compile without calling `super(...)` explicitly. It won't — if the parent has no no-arg constructor
+> available, the subclass **must** explicitly call `super(arguments)` as its first statement, or the code fails to
+> compile.
+
+> 📝 **Quick Revision — 4.4**
+> - Constructors aren't inherited, but the parent's constructor always runs first
+> - This happens via an implicit or explicit `super()` call, always as the first statement
+> - If the parent has no no-arg constructor, the subclass must explicitly call `super(...)`
+
+---
+
+## 4.5 — 🪄 The `super` Keyword
+
+### 📌 Why `super` Exists
+
+Once a subclass overrides a parent's method or hides a parent's field (4.7), there needs to be an explicit way to say *"
+I specifically mean the parent's version of this, not mine."* `super` provides exactly that.
+
+### ⚡ Accessing Parent Variables
+
+```java
+class Employee {
+    double salary = 50000;
+}
+
+class Manager extends Employee {
+    double salary = 80000;   // same name as parent — "hides" it (see 4.7)
+
+    void showSalaries() {
+        System.out.println("Manager's salary: " + this.salary);    // 80000
+        System.out.println("Employee's salary: " + super.salary);  // 50000
+    }
+}
+```
+
+### ⚡ Calling Parent Methods
+
+```java
+class Employee {
+    void work() { System.out.println("Employee is working"); }
+}
+
+class Manager extends Employee {
+    @Override
+    void work() {
+        super.work();   // explicitly run the parent's version first
+        System.out.println("Manager is also approving leaves");
+    }
+}
+```
+
+### ⚡ Calling Parent Constructors
+
+```java
+class Manager extends Employee {
+    Manager(String name) {
+        super(name);   // must be the FIRST statement
+    }
+}
+```
+
+### ⚖️ `this` vs `super`
+
+| Aspect                | `this`                                          | `super`                                         |
+|-----------------------|-------------------------------------------------|-------------------------------------------------|
+| Refers to             | The current object                              | The immediate parent class's part of the object |
+| Used for variables    | Current class's own field                       | Parent class's (hidden) field                   |
+| Used for methods      | Current class's own method                      | Parent class's (overridden) method              |
+| Used for constructors | Calls another constructor in the **same** class | Calls a constructor in the **parent** class     |
+| Placement rule        | Must be the first statement (`this(...)`)       | Must be the first statement (`super(...)`)      |
+
+### ⚠️ Common Mistakes
+
+> ⚠️ **Common Mistake 1**
+> Using both `this(...)` and `super(...)` in the same constructor. Only **one** of them is allowed, since both must
+> occupy the "first statement" position — you cannot have two first statements.
+
+> ⚠️ **Common Mistake 2**
+> Forgetting that `super.method()` calls the **immediate** parent's version — it does not let you skip further up a
+> multilevel chain to a grandparent directly.
+
+> 📝 **Quick Revision — 4.5**
+> - `super` = explicit reference to the parent class's variables/methods/constructor
+> - `super(...)` must be the first statement in a constructor (like `this(...)`)
+> - `this` → current object/class; `super` → parent class's part of the object
+
+---
+
+## 4.6 — 🧬 Method Inheritance
+
+### 📌 Inherited Methods
+
+A subclass automatically gains access to all **non-private** methods of its superclass, as if they were written directly
+inside the subclass.
+
+```java
+class Employee {
+    public void work() { System.out.println("Working"); }
+}
+
+class Manager extends Employee { }   // no methods written here
+
+Manager m = new Manager();
+m.work();   // ✅ inherited and callable directly
+```
+
+### ⚡ Access Modifier Effects on Inheritance
+
+| Modifier on Parent Method | Inherited & Callable in Subclass?         |
+|---------------------------|-------------------------------------------|
+| `public`                  | ✅ Yes, from anywhere                      |
+| `protected`               | ✅ Yes, including across packages          |
+| default (package-private) | ✅ Only if subclass is in the same package |
+| `private`                 | ❌ No — not accessible by name at all      |
+
+### ⚡ Static Methods
+
+Static methods are **not overridden** — they can only be **hidden**. The version that runs is decided by the **reference
+type**, at compile-time, not the actual object type.
+
+```java
+class Employee {
+    static void policy() { System.out.println("Employee policy"); }
+}
+class Manager extends Employee {
+    static void policy() { System.out.println("Manager policy"); }   // hides, not overrides
+}
+```
+
+```java
+Employee e = new Manager();
+e.policy();   // prints "Employee policy" — decided by reference TYPE (Employee), not actual object
+```
+
+### ⚡ Final Methods
+
+A method marked `final` in the parent **cannot be overridden** by any subclass at all — the compiler enforces this.
+
+```java
+class Employee {
+    final void getEmployeeId() { System.out.println("EMP-001"); }
+}
+class Manager extends Employee {
+    // void getEmployeeId() { }   ❌ Compile Error — cannot override a final method
+}
+```
+
+### ⚡ Private Methods
+
+Private methods are **not inherited** in any usable sense — the subclass cannot see or call them by name. If a subclass
+defines a method with the exact same signature, it's a **brand-new, unrelated** method, not an override.
+
+### ⚖️ Constructor Inheritance vs Method Inheritance
+
+| Aspect                 | Constructors                         | Methods                                                           |
+|------------------------|--------------------------------------|-------------------------------------------------------------------|
+| Inherited by subclass? | ❌ Never inherited                    | ✅ Inherited (unless `private`)                                    |
+| Can be overridden?     | Not applicable (not inherited)       | ✅ Yes (unless `final`/`static`/`private`)                         |
+| Automatically invoked? | ✅ Parent constructor auto-runs first | ❌ Must be explicitly called (unless polymorphic dispatch applies) |
+| Accessed via           | `super(...)` only                    | Direct call, or `super.method()`                                  |
+
+> 📝 **Quick Revision — 4.6**
+> - Public/protected/default (same package) methods are inherited; private methods are not
+> - `final` methods cannot be overridden; `static` methods can only be hidden, not overridden
+> - Constructors are never inherited — methods usually are, with exceptions above
+
+---
+
+## 4.7 — 🎭 Variable Hiding
+
+### 📌 What is Variable Hiding?
+
+When a subclass declares a field with the **exact same name** as a field in its superclass, the subclass's field **hides
+** the parent's field — it does not override it (fields are never "overridden" in Java).
+
+### ❓ Why It Happens
+
+Java resolves **field access based on reference type**, at **compile-time** — unlike methods, fields don't use dynamic
+dispatch at all.
+
+### 💻 Practical Example
+
+```java
+class Employee {
+    String designation = "Employee";
+}
+class Manager extends Employee {
+    String designation = "Manager";   // hides parent's field
+}
+```
+
+```java
+Employee e = new Manager();
+System.out.println(e.designation);          // "Employee" — reference TYPE decides
+System.out.println(((Manager) e).designation); // "Manager" — after explicit cast
+```
+
+### ⚖️ Variable Hiding vs Method Overriding
+
+| Aspect               | Variable Hiding                        | Method Overriding                          |
+|----------------------|----------------------------------------|--------------------------------------------|
+| Applies to           | Fields                                 | Methods                                    |
+| Resolved at          | Compile-time (based on reference type) | Runtime (based on actual object type)      |
+| Mechanism            | Hiding                                 | Dynamic method dispatch                    |
+| `super.field` access | Accesses the parent's hidden field     | `super.method()` accesses parent's version |
+
+> 🔥 **Interview Insight**
+> This is one of the most misunderstood areas in Java OOP: *fields never participate in runtime polymorphism — only
+methods do.* Many students wrongly assume `e.designation` would print "Manager" just because the actual object is a
+`Manager` — but field access is purely based on the **reference type** (`Employee`), unlike method calls.
+
+> 📝 **Quick Revision — 4.7**
+> - Variable hiding = subclass field with same name "hides" parent's field
+> - Resolved at compile-time using **reference type**, never the actual object type
+> - This is the #1 trap question distinguishing fields from methods in inheritance
+
+---
+
+## 4.8 — 🌐 Object Class Hierarchy
+
+### 📌 `Object` as the Root Class
+
+Every single class in Java — whether you write `extends` or not — ultimately inherits from `java.lang.Object`, either
+directly or indirectly.
+
+```
+ASCII Diagram — The Universal Root
+
+                  Object
+                 /   |    \
+                ▼    ▼     ▼
+            Employee String  ArrayList
+               │
+               ▼
+            Manager
+```
+
+### ❓ Why Every Class Extends `Object`
+
+Java guarantees that **every** object — no matter what class it belongs to — has a baseline set of universal behaviors (
+comparing, printing, hashing). This consistency is what allows generic mechanisms like `HashMap`, `toString()` logging,
+and `equals()`-based comparisons to work on **any** object whatsoever.
+
+### ⚡ Common Inherited Methods (Teaser)
+
+| Method             | Purpose                                                           |
+|--------------------|-------------------------------------------------------------------|
+| `toString()`       | Returns a readable text representation of the object              |
+| `equals(Object o)` | Defines what "equal" means for two objects of this class          |
+| `hashCode()`       | Produces an integer used by hash-based collections like `HashMap` |
+
+```java
+class Employee { }
+
+Employee e = new Employee();
+System.out.println(e);   // calls Object's default toString() → something like "Employee@1b6d3586"
+```
+
+> 💡 **Important**
+> These three methods are inherited from `Object` with **default behavior that is rarely useful** (e.g., default
+`equals()` only checks if two references point to the *same* object). Overriding them correctly is a deep topic on its
+> own — covered fully in a later chapter.
+
+> 📝 **Quick Revision — 4.8**
+> - Every Java class implicitly inherits from `Object`, directly or indirectly
+> - This guarantees universal methods like `toString()`, `equals()`, `hashCode()` on every object
+> - Default implementations are basic — overriding them properly is a topic for later
+
+---
+
+## 4.9 — 🔧 Composition vs Inheritance
+
+### 📌 HAS-A vs IS-A
+
+| Relationship        | Question Asked             | Example                   |
+|---------------------|----------------------------|---------------------------|
+| IS-A (Inheritance)  | "Is X a kind of Y?"        | `Manager` IS-A `Employee` |
+| HAS-A (Composition) | "Does X have/contain a Y?" | `Car` HAS-A `Engine`      |
+
+```
+ASCII Diagram — Composition (HAS-A)
+
+   Car
+    │
+    │ has-a
+    ▼
+  Engine
+```
+
+```java
+class Engine {
+    void start() { System.out.println("Engine starting"); }
+}
+
+class Car {
+    private Engine engine = new Engine();   // Car HAS-A Engine
+
+    void start() {
+        engine.start();   // delegates to the contained object
+    }
+}
+```
+
+### ⚡ Advantages of Composition
+
+| Advantage            | Explanation                                                                     |
+|----------------------|---------------------------------------------------------------------------------|
+| Loose coupling       | `Car` depends only on `Engine`'s public interface, not its internals            |
+| Flexible at runtime  | The `Engine` object can be swapped for a different implementation easily        |
+| No fragile hierarchy | Changes to `Engine` rarely ripple unpredictably into `Car`                      |
+| Avoids forced "is-a" | No need to twist unrelated classes into an artificial parent-child relationship |
+
+### ⚡ Disadvantages of Composition
+
+| Disadvantage              | Explanation                                                                           |
+|---------------------------|---------------------------------------------------------------------------------------|
+| More boilerplate          | You must manually write delegating methods (`engine.start()` wrappers)                |
+| No automatic polymorphism | Composition alone doesn't give you the dynamic dispatch benefits inheritance provides |
+
+### 🌍 Real-World Examples
+
+| Scenario                       | Better Modeled As                                                                  |
+|--------------------------------|------------------------------------------------------------------------------------|
+| `SavingsAccount` and `Account` | Inheritance (SavingsAccount IS-A Account)                                          |
+| `Car` and `Engine`             | Composition (Car HAS-A Engine)                                                     |
+| `Order` and `PaymentMethod`    | Composition (Order HAS-A PaymentMethod)                                            |
+| `Square` and `Rectangle`       | ⚠️ Tricky — looks like IS-A, but often violates behavioral expectations (see 4.10) |
+
+### ⚡ "Favor Composition Over Inheritance"
+
+This is a well-known software design principle. It doesn't mean "never use inheritance" — it means: **default to
+composition unless there's a genuine, stable IS-A relationship**, because composition produces more flexible,
+loosely-coupled designs that are easier to change later.
+
+> 🎯 **Placement Tip**
+> If an interviewer asks *"When would you prefer composition over inheritance?"* — a strong answer: *"When the
+relationship is HAS-A rather than IS-A, when I need to swap implementations at runtime, or when I want to avoid tightly
+coupling my class to a parent's internal implementation details."*
+
+> 📝 **Quick Revision — 4.9**
+> - IS-A → Inheritance; HAS-A → Composition
+> - Composition = looser coupling, more flexibility, more boilerplate
+> - "Favor composition over inheritance" = a default preference, not an absolute rule
+
+---
+
+## 4.10 — 🏛️ Best Practices
+
+### 🚫 When NOT to Use Inheritance
+
+- When the relationship is **HAS-A**, not IS-A (e.g., don't make `Car extends Engine`).
+- When you only want to **reuse a bit of code**, without a true conceptual "is-a" relationship — use composition or
+  utility classes instead.
+- When the subclass would need to **override most parent behavior** just to "fit in" — that's a sign the hierarchy is
+  wrong.
+
+### 🔗 Tight Coupling
+
+Inheritance creates one of the **tightest** possible couplings in OOP: a subclass's correctness can depend on the exact
+internal implementation details of its parent — details the subclass author may not even know exist.
+
+### 🏗️ The Fragile Base Class Problem
+
+> A seemingly safe change to a superclass can silently break subclasses that depended on its old internal behavior —
+> even though the subclass's own code never changed.
+
+```java
+class Employee {
+    void work() {
+        logStart();
+        System.out.println("Working");
+    }
+    void logStart() { System.out.println("Start logged"); }
+}
+
+class Manager extends Employee {
+    @Override
+    void logStart() {
+        System.out.println("Manager-specific log");
+        sendNotification();   // assumes this is always safe to call here
+    }
+    void sendNotification() { System.out.println("Notification sent"); }
+}
+```
+
+If `Employee.work()` is later changed to call `logStart()` **twice** for some unrelated reason, `Manager`'s
+`sendNotification()` silently runs twice too — a bug introduced in the parent, surfacing inside the child, without the
+child's code changing at all.
+
+### 🏗️ Designing Maintainable Class Hierarchies
+
+| Guideline                                            | Why                                                         |
+|------------------------------------------------------|-------------------------------------------------------------|
+| Keep hierarchies shallow (2–3 levels max)            | Deep chains make behavior hard to trace                     |
+| Document what subclasses are allowed to override     | Prevents fragile-base-class surprises                       |
+| Prefer `final` on methods not meant to be overridden | Locks down stable, critical behavior                        |
+| Reconsider if a subclass overrides almost everything | Likely a sign the hierarchy is wrong — consider composition |
+
+### 🚫 Common Beginner Mistakes
+
+> 🚫 **Mistake 1** — Using inheritance purely to "reuse a method," ignoring whether an IS-A relationship genuinely
+> exists.
+> 🚫 **Mistake 2** — Forgetting that `super(...)` must be the first statement, causing confusing compile errors.
+> 🚫 **Mistake 3** — Assuming fields are polymorphic like methods (forgetting variable hiding rules from 4.7).
+> 🚫 **Mistake 4** — Building deep inheritance chains (5+ levels) that become impossible to safely modify.
+> 🚫 **Mistake 5** — Overriding a method without understanding what the parent's version was responsible for, breaking
+> assumptions the rest of the hierarchy relies on.
+
+> 📝 **Quick Revision — 4.10**
+> - Avoid inheritance for HAS-A relationships or pure code-reuse without true IS-A
+> - The Fragile Base Class Problem: safe-looking parent changes can silently break children
+> - Keep hierarchies shallow, document override contracts, use `final` where appropriate
+
+---
+
+## 4.11 — 💻 Practice Section
+
+### 🧠 Conceptual Questions
+
+1. Why does Java disallow multiple inheritance of classes?
+2. What's the difference between IS-A and HAS-A relationships?
+3. Why does the parent constructor always run before the child's constructor body?
+4. Why can't static methods be overridden, only hidden?
+5. Why are private methods not considered "inherited" in any meaningful sense?
+6. What is the Fragile Base Class Problem, and why is it dangerous?
+7. Why are fields resolved by reference type, while methods are resolved by actual object type?
+8. Why can interfaces support multiple inheritance, but classes can't?
+9. When would you choose composition over inheritance?
+10. Why must `super(...)` or `this(...)` always be the first statement in a constructor?
+
+### 💻 Coding Questions (Easy → Medium → Interview)
+
+#### 🟢 Easy
+
+**Task:** Create a superclass `Animal` with a method `eat()`, and a subclass `Dog` that adds a method `bark()`.
+Demonstrate calling both methods on a `Dog` object.
+
+<details>
+<summary>💡 Hint</summary>
+
+Use `class Dog extends Animal` and simply call both `eat()` and `bark()` on a `Dog` instance.
+</details>
+
+<details>
+<summary>✅ Solution</summary>
+
+```java
+class Animal {
+    void eat() { System.out.println("Animal is eating"); }
+}
+
+class Dog extends Animal {
+    void bark() { System.out.println("Dog is barking"); }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog d = new Dog();
+        d.eat();   // inherited
+        d.bark();  // own method
+    }
+}
+```
+
+</details>
+
+---
+
+#### 🟡 Medium
+
+**Task:** Create a 3-level hierarchy: `Vehicle` → `Car` → `ElectricCar`. Each level adds one new method. Demonstrate
+constructor chaining by printing a message from each constructor, in the correct order.
+
+<details>
+<summary>💡 Hint</summary>
+
+Each subclass constructor should implicitly or explicitly call `super()` as its first action — print messages in each
+constructor and observe the order.
+</details>
+
+<details>
+<summary>✅ Solution</summary>
+
+```java
+class Vehicle {
+    Vehicle() { System.out.println("Vehicle created"); }
+    void move() { System.out.println("Vehicle moving"); }
+}
+
+class Car extends Vehicle {
+    Car() { System.out.println("Car created"); }
+    void honk() { System.out.println("Car honking"); }
+}
+
+class ElectricCar extends Car {
+    ElectricCar() { System.out.println("ElectricCar created"); }
+    void chargeBattery() { System.out.println("Charging battery"); }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ElectricCar ec = new ElectricCar();
+        // Output order:
+        // Vehicle created
+        // Car created
+        // ElectricCar created
+    }
+}
+```
+
+</details>
+
+---
+
+#### 🔴 Interview-Level
+
+**Task:** Demonstrate variable hiding: create `Employee` and `Manager` (extends `Employee`), both with a field named
+`level`. Show that accessing `level` through an `Employee` reference pointing to a `Manager` object prints the *
+*Employee's** value, not the Manager's — and explain why in a comment.
+
+<details>
+<summary>💡 Hint</summary>
+
+Remember: fields are resolved by **reference type**, not actual object type — unlike overridden methods.
+</details>
+
+<details>
+<summary>✅ Solution</summary>
+
+```java
+class Employee {
+    String level = "Employee Level";
+}
+
+class Manager extends Employee {
+    String level = "Manager Level";   // hides parent's field
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Employee e = new Manager();
+        System.out.println(e.level);
+        // Prints "Employee Level" — because field access is resolved using the
+        // REFERENCE TYPE (Employee) at compile-time, not the actual object type (Manager).
+        // This is the opposite of how overridden methods behave.
+    }
+}
+```
+
+</details>
+
+> 📝 **Quick Revision — 4.11**
+> - Practice constructor chaining order, variable hiding, and basic hierarchy design
+> - Always connect each coding answer back to *why* Java behaves that way internally
+
+---
+
+## 4.12 — 🎯 Interview Section
+
+<details open>
+<summary><b>Click to expand all 25 questions</b></summary>
+
+| #  | Question                                                               | Answer                                                                                                                                                                     |
+|----|------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | What is inheritance?                                                   | A mechanism where a subclass acquires the fields and methods of a superclass, enabling code reuse and modeling IS-A relationships.                                         |
+| 2  | What is the IS-A relationship?                                         | A relationship where the subclass is genuinely a specialized kind of the superclass (e.g., Manager IS-A Employee).                                                         |
+| 3  | What is the HAS-A relationship?                                        | A relationship where one class contains/uses another as a part, modeled via composition, not inheritance.                                                                  |
+| 4  | Why doesn't Java support multiple inheritance with classes?            | To avoid the Diamond Problem — ambiguity when two parent classes provide conflicting versions of the same method.                                                          |
+| 5  | How does Java achieve multiple inheritance of type?                    | Through interfaces — a class can implement multiple interfaces since they primarily define contracts, not conflicting state.                                               |
+| 6  | What is the Diamond Problem?                                           | The ambiguity that arises when a class inherits from two classes that both define the same method differently, leaving the compiler unable to decide which version to use. |
+| 7  | What is hybrid inheritance?                                            | A combination of multiple inheritance types (e.g., hierarchical plus multilevel) built using valid single-inheritance-per-class structures.                                |
+| 8  | Which constructor runs first when a subclass object is created?        | The superclass's constructor always runs first, before the subclass constructor's own body executes.                                                                       |
+| 9  | Are constructors inherited?                                            | No. Constructors are never inherited; the parent's constructor is invoked via an implicit or explicit `super()` call instead.                                              |
+| 10 | What happens if the parent class has no no-argument constructor?       | The subclass must explicitly call `super(arguments)` as the first statement in its own constructor, or the code fails to compile.                                          |
+| 11 | What is the `super` keyword used for?                                  | Accessing the parent class's hidden fields, calling the parent's overridden methods, and invoking the parent's constructor.                                                |
+| 12 | Difference between `this` and `super`?                                 | `this` refers to the current object/class; `super` refers explicitly to the parent class's part of the object.                                                             |
+| 13 | Can you use both `this(...)` and `super(...)` in the same constructor? | No — only one can occupy the required "first statement" position in a constructor.                                                                                         |
+| 14 | Can private methods be overridden?                                     | No — private methods aren't inherited in any usable sense, so a same-signature method in a subclass is an entirely separate method, not an override.                       |
+| 15 | Can static methods be overridden?                                      | No — static methods can only be hidden; the version called depends on the reference type at compile-time, not the actual object.                                           |
+| 16 | Can `final` methods be overridden?                                     | No — `final` explicitly prevents any subclass from overriding that method.                                                                                                 |
+| 17 | What is variable hiding?                                               | When a subclass declares a field with the same name as a superclass field, the subclass field hides (not overrides) the parent's field.                                    |
+| 18 | How is variable hiding resolved differently from method overriding?    | Field access is resolved at compile-time based on the reference type; overridden method calls are resolved at runtime based on the actual object type.                     |
+| 19 | Why does every Java class inherit from `Object`?                       | To guarantee a baseline set of universal behaviors (`toString()`, `equals()`, `hashCode()`) on every object in the language.                                               |
+| 20 | What's the Fragile Base Class Problem?                                 | A situation where an apparently safe change to a superclass unexpectedly breaks subclass behavior that depended on the parent's previous internal implementation.          |
+| 21 | When should you prefer composition over inheritance?                   | When the relationship is HAS-A rather than IS-A, when you need runtime flexibility, or when you want to avoid tight coupling to a parent's internals.                      |
+| 22 | Give an example of incorrect inheritance usage.                        | Making `Stack extends ArrayList` purely to reuse list methods, even though a Stack isn't conceptually a kind of list with all of ArrayList's behavior exposed.             |
+| 23 | Why are deep inheritance hierarchies discouraged?                      | They make behavior difficult to trace, increase fragility, and make safe changes to any single class increasingly risky.                                                   |
+| 24 | What's a common interview trap involving field access and inheritance? | Asking what an inherited-but-hidden field prints when accessed via a superclass reference — testing whether you know fields don't participate in runtime polymorphism.     |
+| 25 | What's the real benefit of "favor composition over inheritance"?       | It produces designs with looser coupling, making future changes safer and implementations easier to swap, without forcing artificial IS-A relationships.                   |
+
+</details>
+
+### 🔥 Frequently Asked Interview Traps
+
+> 🔥 **Trap 1:** "If `Manager extends Employee` and both override `toString()`, what happens with
+`Employee e = new Manager(); System.out.println(e);`?" — It prints `Manager`'s version, because method calls use *
+*dynamic dispatch** based on the actual object, unlike fields.
+>
+> 🔥 **Trap 2:** "Does a subclass `import` give it access to a `private` field of its parent in the same file?" — No.
+`private` blocks access strictly by **class boundary**, not by file, package, or inheritance relationship.
+
+### 🎯 Real Placement Scenario
+
+> An interviewer gives you a `Bird` class with `fly()`, and asks you to model a `Penguin`. A naive answer is
+`class Penguin extends Bird`. The strong answer recognizes this **violates behavioral expectations** (a Penguin can't
+> fly) — and instead proposes separating `fly()` into a `Flyable` interface that only flying birds implement,
+> demonstrating awareness of design correctness beyond syntax.
+
+---
+
+## 📖 Chapter Wrap-Up
+
+### 🔑 Key Takeaways
+
+- Inheritance solves duplication by letting subclasses reuse and extend a superclass's fields and methods.
+- The IS-A test is the deciding factor for whether inheritance is the right tool — HAS-A belongs to composition.
+- Java disallows multiple inheritance of classes specifically to avoid the Diamond Problem; interfaces fill that gap
+  safely.
+- The parent constructor always executes before the child's constructor body, via implicit or explicit `super()`.
+- `super` explicitly accesses the parent's variables, methods, and constructor; `this` refers to the current object.
+- Fields are resolved by **reference type** (variable hiding); methods are resolved by **actual object type** (dynamic
+  dispatch) — this asymmetry is a major interview theme.
+- "Favor composition over inheritance" is a guideline, not an absolute law — use inheritance only for genuine, stable
+  IS-A relationships.
+
+### 📝 Quick Revision Notes
+
+- Types: Single-level, Multilevel, Hierarchical — all valid in Java with single class inheritance.
+- Multiple inheritance of classes → not allowed; multiple interfaces → allowed.
+- `super(...)`/`this(...)` → must be the first statement in a constructor; never both together.
+- `final` methods → cannot be overridden. `static` methods → can only be hidden, not overridden.
+- `private` members/methods → not inherited in any accessible sense.
+
+### 🧠 Memory Tricks
+
+```
+IS-A   → Inheritance  ("Manager IS-A Employee")
+HAS-A  → Composition  ("Car HAS-A Engine")
+
+Fields  → resolved by REFERENCE type (compile-time)
+Methods → resolved by ACTUAL object type (runtime)
+```
+
+```
+Constructor order in inheritance:
+PARENT first, CHILD second — always, no exceptions.
+("Grandparents are born before grandchildren.")
+```
+
+### ❓ Self-Check Questions
+
+1. Can you explain, without notes, exactly why the Diamond Problem makes multiple class inheritance unsafe?
+2. Can you write a 3-level inheritance chain and correctly predict the constructor execution order?
+3. Can you explain why `Employee e = new Manager(); e.someField;` might print the wrong value compared to what beginners
+   expect?
+4. Can you justify, in an interview, when you would choose composition instead of inheritance?
+
+### 🎯 Mini Coding Challenge
+
+> Design a `Shape` hierarchy: `Shape` (superclass) → `Circle`, `Rectangle` (subclasses, hierarchical inheritance). Each
+> subclass should override a method `area()`. Then write a `Main` class that creates an array of `Shape` references
+> pointing to different subclass objects, and calls `area()` on each — observe that the correct subclass version runs
+> every time, even though the array type is `Shape`. (This is your first hands-on glimpse of polymorphism — fully
+> explained next chapter!)
+
+### 🔮 Preview of Next Chapter
+
+You just saw it in the Mini Challenge: an array of `Shape` references, each silently calling the *correct* subclass's
+`area()` method — even though every reference in the array has the same declared type. That "correct version
+automatically chosen at runtime" behavior is not magic — it's **Polymorphism**, the fourth pillar of OOP, and it exists
+*because* of everything you just learned about inheritance and method overriding. Next chapter, we go deep into exactly
+how and why this works.
+
+---
+
+<div align="center">
+
+> 📌 **Keep this file as your Chapter 4 revision sheet.**
+> Re-read **Section 4.12** and the **Chapter Wrap-Up** the night before any interview.
+
+➡️ **Next Chapter:** README-05-Polymorphism.md — *Polymorphism*
+
+⭐ *If this helped you, consider starring the repo for quick future access.*
+
+</div>
