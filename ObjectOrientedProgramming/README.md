@@ -1,6 +1,6 @@
 <div align="center">
 
-# 📘 Java OOP Foundation:
+# 📘 Java OOP Foundation
 
 ### From Absolute Beginner → Placement Ready
 
