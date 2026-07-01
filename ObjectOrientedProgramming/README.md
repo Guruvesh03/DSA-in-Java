@@ -4869,7 +4869,8 @@ public class Main {
 ### 🚫 Common Misconceptions
 
 > 🚫 Overloading is **not** polymorphism in the "runtime, flexible behavior" sense most people associate with OOP — it's
-> resolved entirely at **compile-time**, so some textbooks debate calling it "true" polymorphism at all, even though it is
+> resolved entirely at **compile-time**, so some textbooks debate calling it "true" polymorphism at all, even though it
+> is
 > officially categorized as static polymorphism.
 
 > 📝 **Quick Revision — 5.3**
@@ -4897,17 +4898,23 @@ subtype.
 
 ```java
 class Animal {
-    void sound() { System.out.println("Some generic animal sound"); }
+    void sound() {
+        System.out.println("Some generic animal sound");
+    }
 }
 
 class Dog extends Animal {
     @Override
-    void sound() { System.out.println("Bark"); }
+    void sound() {
+        System.out.println("Bark");
+    }
 }
 
 class Cat extends Animal {
     @Override
-    void sound() { System.out.println("Meow"); }
+    void sound() {
+        System.out.println("Meow");
+    }
 }
 ```
 
@@ -5073,7 +5080,8 @@ a.sound()  called
 > 💡 **Important**
 > The **compiler** only checks that the **reference type** has a method with that name (so your code is type-safe to
 > compile). The **JVM**, at the actual moment of execution, checks the **real object's** method table to decide which
-> version truly runs. This two-stage process — compile-time type-checking + runtime dispatch — is the complete picture of
+> version truly runs. This two-stage process — compile-time type-checking + runtime dispatch — is the complete picture
+> of
 > how overriding works.
 
 ### 🏗️ Memory Perspective
@@ -5668,14 +5676,21 @@ object type. This is method hiding, not overriding.
 
 ```java
 class Animal {
-    void sound() { System.out.println("Generic sound"); }
+    void sound() {
+        System.out.println("Generic sound");
+    }
 }
+
 class Dog extends Animal {
-    void sound(int volume) { System.out.println("Bark at " + volume); }
+    void sound(int volume) {
+        System.out.println("Bark at " + volume);
+    }
 }
 
 Animal a = new Dog();
-a.sound();
+a.
+
+sound();
 ```
 
 **Answer:** `"Generic sound"` — `Dog`'s `sound(int)` has a different signature, so it's an overload, not an override.
@@ -5744,14 +5759,3 @@ turns "this can be overridden" into "this **must** be implemented," giving your 
 structure.
 
 ---
-
-<div align="center">
-
-> 📌 **Keep this file as your Chapter 5 revision sheet.**
-> Re-read **Section 5.14** and the **Chapter Wrap-Up** the night before any interview.
-
-➡️ **Next Chapter:** README-06-Abstraction-and-Abstract-Classes.md — *Abstraction & Abstract Classes*
-
-⭐ *If this helped you, consider starring the repo for quick future access.*
-
-</div>
