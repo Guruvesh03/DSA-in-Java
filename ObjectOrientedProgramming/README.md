@@ -6297,7 +6297,8 @@ new Developer("Riya", 5000)
 ```
 
 > 🔑 **Key Rule:** Even though `Employee` can never be instantiated on its own, its constructor **always** runs, exactly
-> once, whenever any subclass object is created. This is enforced automatically by Java through implicit `super()` calls.
+> once, whenever any subclass object is created. This is enforced automatically by Java through implicit `super()`
+> calls.
 
 ---
 
@@ -6321,7 +6322,9 @@ abstract class Vehicle {
 }
 
 class Car extends Vehicle {
-    Car(String brand) { super(brand); }
+    Car(String brand) {
+        super(brand);
+    }
 
     @Override
     void move() {
@@ -6330,7 +6333,9 @@ class Car extends Vehicle {
 }
 
 class Bike extends Vehicle {
-    Bike(String brand) { super(brand); }
+    Bike(String brand) {
+        super(brand);
+    }
 
     @Override
     void move() {
@@ -6348,7 +6353,10 @@ added later (e.g., `Truck`).
 ```java
 abstract class Employee {
     String name;
-    Employee(String name) { this.name = name; }
+
+    Employee(String name) {
+        this.name = name;
+    }
 
     abstract double calculateSalary();
 
@@ -6358,15 +6366,25 @@ abstract class Employee {
 }
 
 class Developer extends Employee {
-    Developer(String name) { super(name); }
+    Developer(String name) {
+        super(name);
+    }
+
     @Override
-    double calculateSalary() { return 60000; }
+    double calculateSalary() {
+        return 60000;
+    }
 }
 
 class Manager extends Employee {
-    Manager(String name) { super(name); }
+    Manager(String name) {
+        super(name);
+    }
+
     @Override
-    double calculateSalary() { return 90000; }
+    double calculateSalary() {
+        return 90000;
+    }
 }
 ```
 
@@ -6375,7 +6393,10 @@ class Manager extends Employee {
 ```java
 abstract class Payment {
     double amount;
-    Payment(double amount) { this.amount = amount; }
+
+    Payment(double amount) {
+        this.amount = amount;
+    }
 
     abstract boolean processPayment();
 
@@ -6385,7 +6406,10 @@ abstract class Payment {
 }
 
 class CreditCardPayment extends Payment {
-    CreditCardPayment(double amount) { super(amount); }
+    CreditCardPayment(double amount) {
+        super(amount);
+    }
+
     @Override
     boolean processPayment() {
         System.out.println("Validating card via Luhn algorithm...");
@@ -6394,7 +6418,10 @@ class CreditCardPayment extends Payment {
 }
 
 class UpiPayment extends Payment {
-    UpiPayment(double amount) { super(amount); }
+    UpiPayment(double amount) {
+        super(amount);
+    }
+
     @Override
     boolean processPayment() {
         System.out.println("Routing through NPCI...");
@@ -6407,8 +6434,12 @@ class UpiPayment extends Payment {
 
 ```java
 Payment payment = getSelectedPaymentMethod();
-payment.logTransaction();
-payment.processPayment();
+payment.
+
+logTransaction();
+payment.
+
+processPayment();
 ```
 
 No `if-else` chain checking payment type. Adding `PayPalPayment` later requires **zero changes** to the checkout code —
@@ -6516,7 +6547,9 @@ class Rectangle extends Shape {
 ### ❌ Mistake 1: Instantiating an Abstract Class
 
 ```java
-abstract class Shape { abstract double area(); }
+abstract class Shape {
+    abstract double area();
+}
 
 Shape s = new Shape(); // ❌ Compile-time error
 ```
@@ -6726,14 +6759,24 @@ Yes — it can override any method from `Object` (like `toString()`, `equals()`)
 
 ```java
 abstract class A {
-    A() { System.out.println("A constructor"); display(); }
+    A() {
+        System.out.println("A constructor");
+        display();
+    }
+
     abstract void display();
 }
+
 class B extends A {
     int x = 10;
-    void display() { System.out.println("x = " + x); }
+
+    void display() {
+        System.out.println("x = " + x);
+    }
 }
-new B();
+new
+
+B();
 ```
 
 **What's the output?**
@@ -6821,9 +6864,5 @@ introducing **interfaces** at all?
 Because abstract classes have one hard limit: **a class can extend only one abstract (or any) class.** But real-world
 objects often need to promise **multiple, unrelated capabilities**. A `Smartphone` might need to be `Chargeable`,
 `Playable` (music), and `Connectable` (Bluetooth) — all at once, none of which share a common "is-a" identity.
-
-In **Chapter 7: Interfaces**, you'll learn how Java uses interfaces to achieve **multiple inheritance of type**, how
-`default` and `static` methods (Java 8+) blurred the old "100% abstract" rule, and exactly when to reach for an
-interface instead of an abstract class — a decision that comes up in nearly every system design interview.
 
 ---
