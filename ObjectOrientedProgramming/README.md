@@ -6866,3 +6866,858 @@ objects often need to promise **multiple, unrelated capabilities**. A `Smartphon
 `Playable` (music), and `Connectable` (Bluetooth) — all at once, none of which share a common "is-a" identity.
 
 ---
+
+# 📘 Chapter 7: Interfaces
+
+> *"A class tells you what something IS. An interface tells you what something CAN DO."*
+
+---
+
+## 🔄 Quick Recap: Abstraction & Abstract Classes (Chapter 6)
+
+In Chapter 6, we learned that **abstraction** hides implementation details and exposes only essential behavior. *
+*Abstract classes** gave us a way to do this — mixing concrete (shared) code with abstract (enforced) methods, all
+wrapped inside a genuine **"is-a"** relationship: `Car` **is a** `Vehicle`, `Developer` **is an** `Employee`.
+
+But abstract classes came with one hard constraint we flagged at the end of the chapter:
+
+> A class in Java can `extend` **only one** class — abstract or concrete.
+
+This is fine when your hierarchy is naturally "is-a." But real-world software is full of objects that need to promise *
+*multiple, unrelated capabilities** at once. A `Smartphone` isn't just "a device" — it's also `Chargeable`, `Playable`,
+and `Connectable`, none of which share a common ancestor.
+
+This chapter answers:
+
+> **"How do I give a class multiple independent capabilities without forcing them into one rigid inheritance tree?"**
+
+That's exactly what **Interfaces** solve.
+
+---
+
+## 🧭 Table of Contents
+
+1. Why Interfaces?
+2. What is an Interface?
+3. Implementing Interfaces
+4. Interface vs Abstract Class
+5. Multiple Inheritance using Interfaces
+6. Default Methods
+7. Static Methods in Interfaces
+8. Private Methods in Interfaces (Java 9+)
+9. Functional Interfaces
+10. Marker Interfaces
+11. Real-World Usage
+12. Best Practices
+13. Common Beginner Mistakes
+14. Practice Section
+15. Interview Section
+16. Key Takeaways & Revision
+
+---
+
+## 1️⃣ Why Interfaces?
+
+### 🚧 Problems With Only Classes and Abstract Classes
+
+Suppose Rahul is designing a system with these types:
+
+- `Bird` (flies, makes sound)
+- `Airplane` (flies, but is a machine)
+- `Fish` (swims, makes sound)
+- `Submarine` (swims, but is a machine)
+
+If Rahul tries to model "flying" and "swimming" using **abstract classes**, he immediately hits a wall:
+
+```java
+abstract class Flyable {
+    abstract void fly();
+}
+
+abstract class Swimmable {
+    abstract void swim();
+}
+
+// ❌ Illegal! Java doesn't allow extending two classes
+class Duck extends Flyable, Swimmable {
+}
+```
+
+Java simply **does not compile** this. A class can only extend **one** superclass — abstract or not. This is called *
+*single inheritance of type**, and it's a deliberate design decision in Java (unlike C++, which allows multiple class
+inheritance and suffers from ambiguity issues as a result).
+
+### 🎯 Why Java Introduced Interfaces
+
+Java's designers wanted:
+
+1. **Multiple inheritance of behavior/type** — without the ambiguity problems of C++'s multiple class inheritance
+2. **100% abstraction** (originally) — a pure contract with zero implementation, forcing total decoupling between "what"
+   and "how"
+3. A way to group **unrelated classes** by shared **capability**, not shared **identity**
+
+### 🌍 Real-World Motivation
+
+Think about real-world roles: A person can be a `Student`, an `Employee`, and an `Athlete` — all at once. These aren't a
+hierarchy ("Student" isn't a type of "Athlete"), they're **independent roles** a single entity can fulfill
+simultaneously. Interfaces model exactly this kind of relationship in code.
+
+### ✅ Achieving Complete Abstraction
+
+Before Java 8, interfaces could **only** have abstract methods — 100% abstraction, zero implementation. This forced
+implementing classes to define *every single detail* of behavior, with the interface acting purely as a *
+*contract/promise**.
+
+### 🧩 The Multiple Inheritance Problem — Solved
+
+```mermaid
+graph TD
+    A[Flyable interface] --> D[Duck class]
+    B[Swimmable interface] --> D
+    C[Animal abstract class] --> D
+```
+
+A class can `implement` **any number** of interfaces while `extending` only **one** class. This gives Java the
+flexibility of multiple inheritance for *behavior contracts*, without the ambiguity risks of multiple inheritance for
+*state/implementation*.
+
+```java
+class Duck extends Animal implements Flyable, Swimmable {
+    // implements fly() from Flyable
+    // implements swim() from Swimmable
+    // inherits shared code from Animal
+}
+```
+
+---
+
+## 2️⃣ What is an Interface?
+
+### 📖 Definition
+
+> An **interface** in Java is a reference type, similar to a class, that can contain **abstract methods**, **default
+methods**, **static methods**, **private methods**, and **constants** — but (traditionally) no instance state and no
+> constructors. It defines a **contract** that implementing classes must fulfill.
+
+### ✍️ Syntax
+
+```java
+interface Playable {
+    void play(); // implicitly public and abstract
+}
+```
+
+### 🧩 Characteristics & Features
+
+| Feature                           | Supported?      | Notes                                |
+|-----------------------------------|-----------------|--------------------------------------|
+| Abstract methods                  | ✅ Yes           | Implicitly `public abstract`         |
+| Default methods                   | ✅ Yes (Java 8+) | Must use `default` keyword           |
+| Static methods                    | ✅ Yes (Java 8+) | Called via interface name            |
+| Private methods                   | ✅ Yes (Java 9+) | Only for internal reuse              |
+| Constants (`public static final`) | ✅ Yes           | Implicitly `public static final`     |
+| Instance variables                | ❌ No            | Interfaces hold no object state      |
+| Constructors                      | ❌ No            | Interfaces can never be instantiated |
+| Instantiation (`new`)             | ❌ No            | Same restriction as abstract classes |
+
+### 📏 Rules
+
+1. Declared using the `interface` keyword.
+2. All abstract methods are **implicitly `public abstract`** — you don't (and shouldn't) write those modifiers
+   explicitly.
+3. All variables are **implicitly `public static final`** — i.e., constants. You **must** initialize them at
+   declaration.
+4. An interface **can extend multiple other interfaces** (unlike classes, which extend only one).
+5. A class implementing an interface must implement **all** abstract methods, or be declared `abstract` itself.
+
+### 🔍 Default Behavior of Variables and Methods
+
+```java
+interface Config {
+    int MAX_USERS = 100;   // implicitly: public static final int MAX_USERS = 100;
+
+    void connect();          // implicitly: public abstract void connect();
+}
+```
+
+```java
+// This is what the compiler actually sees:
+interface Config {
+    public static final int MAX_USERS = 100;
+
+    public abstract void connect();
+}
+```
+
+> ⚠️ Because interface variables are always `final`, you **cannot** change their value later — they behave exactly like
+> global constants.
+
+### 🏷️ Interface Naming Conventions
+
+| Convention                                       | Example                                            |
+|--------------------------------------------------|----------------------------------------------------|
+| Adjective ending in "-able"/"-ible" (capability) | `Runnable`, `Comparable`, `Serializable`           |
+| Noun describing a role                           | `Payment`, `Repository`, `Service`                 |
+| Prefix with `I` (some teams, not idiomatic Java) | `IPayment` *(uncommon in Java; more common in C#)* |
+
+> 📌 Standard Java convention **avoids** the `I` prefix — the JDK itself uses plain nouns/adjectives (`List`, `Runnable`,
+`Comparable`).
+
+---
+
+## 3️⃣ Implementing Interfaces
+
+### 🔧 The `implements` Keyword
+
+```java
+interface Payment {
+    boolean processPayment(double amount);
+}
+
+class UpiPayment implements Payment {
+    @Override
+    public boolean processPayment(double amount) {
+        System.out.println("Processing UPI payment of ₹" + amount);
+        return true;
+    }
+}
+```
+
+> 🔑 Note: When implementing an interface method, you **must** mark it `public` explicitly — Java doesn't let you narrow
+> visibility (interface methods are always `public` by contract).
+
+### 🧩 Multiple Interface Implementation
+
+```java
+interface Chargeable {
+    void charge();
+}
+
+interface Connectable {
+    void connect();
+}
+
+class Smartphone implements Chargeable, Connectable {
+    @Override
+    public void charge() {
+        System.out.println("Charging via USB-C");
+    }
+
+    @Override
+    public void connect() {
+        System.out.println("Connecting via Bluetooth");
+    }
+}
+```
+
+### 🧬 Implementing Abstract Methods
+
+A class implementing an interface must provide a concrete body for **every** abstract method, unless the class itself is
+`abstract`:
+
+```java
+abstract class PartialPayment implements Payment {
+    // Doesn't implement processPayment() — legal, because PartialPayment is abstract
+    abstract void logAttempt();
+}
+```
+
+### ❌ Common Mistakes
+
+| Mistake                                       | Why It's Wrong                        | Fix                                       |
+|-----------------------------------------------|---------------------------------------|-------------------------------------------|
+| Forgetting `public` when overriding           | Interface methods are always `public` | Add `public` explicitly                   |
+| Not implementing all abstract methods         | Compile-time error                    | Implement all, or mark class `abstract`   |
+| Trying to add instance fields to an interface | Interfaces can't hold object state    | Move state into implementing classes      |
+| Trying to instantiate an interface directly   | `new Payment()` is illegal            | Instantiate a concrete implementing class |
+
+---
+
+## 4️⃣ Interface vs Abstract Class
+
+| Aspect                     | Interface                                                                                     | Abstract Class                                           |
+|----------------------------|-----------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| **Purpose**                | Define a pure **capability/contract**                                                         | Define a **partial implementation** for related types    |
+| **Methods**                | Abstract (default), default, static, private (9+)                                             | Abstract + concrete, freely mixed                        |
+| **Variables**              | Only `public static final` constants                                                          | Any — instance, static, final                            |
+| **Constructors**           | ❌ Not allowed                                                                                 | ✅ Allowed                                                |
+| **Multiple inheritance**   | ✅ A class can implement many interfaces                                                       | ❌ A class can extend only one                            |
+| **Instantiation**          | ❌ Never                                                                                       | ❌ Never (directly)                                       |
+| **Performance**            | Same JVM dispatch cost as classes (modern JVMs)                                               | Same                                                     |
+| **Use case**               | Unrelated classes needing shared capability                                                   | Related classes needing shared code + contract           |
+| **Design philosophy**      | "Can-do" relationship                                                                         | "Is-a" relationship                                      |
+| **Field access modifiers** | Always implicitly public                                                                      | Any modifier allowed                                     |
+| **Interview angle**        | "Why would you choose it over abstract class?" → need multiple inheritance or unrelated types | "Why choose it over interface?" → need shared code/state |
+
+> 🎯 **Interview Insight:** Since Java 8 introduced `default` and `static` methods, the *old* answer — "interfaces are
+> 100% abstract, abstract classes aren't" — is **no longer fully true**. The real modern distinction is about **state
+** (
+> interfaces can't hold instance fields) and **inheritance model** (single class vs multiple interfaces), not about "
+> abstract vs concrete methods" anymore.
+
+---
+
+## 5️⃣ Multiple Inheritance using Interfaces
+
+### 🎯 Why Java Allows It (For Interfaces Only)
+
+Multiple inheritance of **state** is dangerous (ambiguous fields, constructor order chaos). Multiple inheritance of *
+*behavior contracts** is safe, because interfaces (pre-Java 8) had no state and no constructors — there was nothing to
+conflict over except method signatures.
+
+### ⚙️ How It Works
+
+```java
+interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
+
+class Duck implements Flyable, Swimmable {
+    @Override
+    public void fly() {
+        System.out.println("Duck flies short distances");
+    }
+
+    @Override
+    public void swim() {
+        System.out.println("Duck swims gracefully");
+    }
+}
+```
+
+### 🆚 Difference From Class Inheritance
+
+| Class Inheritance                  | Interface Inheritance                             |
+|------------------------------------|---------------------------------------------------|
+| Single (`extends` one class only)  | Multiple (`implements` many interfaces)           |
+| Inherits state (fields) + behavior | Inherits only method contracts (+ default bodies) |
+| Constructor chaining involved      | No constructors, so no chaining                   |
+
+### 💎 The Diamond Problem
+
+The classic "Diamond Problem" occurs when a class inherits **conflicting implementations** of the same method from two
+different parents:
+
+```mermaid
+graph TD
+    A["Interface A<br/>default greet()"] --> C[Class C]
+    B["Interface B<br/>default greet()"] --> C
+```
+
+```java
+interface A {
+    default void greet() {
+        System.out.println("Hello from A");
+    }
+}
+
+interface B {
+    default void greet() {
+        System.out.println("Hello from B");
+    }
+}
+
+// ❌ Compile-time error: class C inherits unrelated defaults for greet() from A and B
+class C implements A, B {
+}
+```
+
+Java **forces you to resolve this explicitly** — it will not silently pick one, unlike some languages.
+
+### 🛠️ Conflict Resolution
+
+```java
+class C implements A, B {
+    @Override
+    public void greet() {
+        A.super.greet(); // explicitly choose A's version
+        // or B.super.greet();
+        // or write entirely new logic here
+        System.out.println("Hello from C (resolved)");
+    }
+}
+```
+
+### 📏 Method Resolution Rules
+
+Java resolves ambiguity using these priority rules:
+
+1. **Classes always win over interfaces.** If a superclass provides a concrete method and an interface provides a
+   `default` method with the same signature, the **class's method wins** automatically — no conflict.
+2. **More specific interfaces win.** If interface `B` extends interface `A` and overrides a default method, and a class
+   implements both, `B`'s version wins.
+3. **Direct conflicts must be resolved manually** using `InterfaceName.super.methodName()`, as shown above.
+
+```mermaid
+flowchart TD
+    Start["Method call on object"] --> Q1{"Does a superclass<br/>provide a concrete method?"}
+    Q1 -->|Yes| UseClass["Class method wins<br/>(always beats interface defaults)"]
+    Q1 -->|No| Q2{"Do multiple interfaces<br/>provide conflicting defaults?"}
+    Q2 -->|Yes| Resolve["Compile error unless<br/>explicitly resolved via<br/>InterfaceName.super.method()"]
+    Q2 -->|No| UseDefault["Use the single available default"]
+```
+
+---
+
+## 6️⃣ Default Methods
+
+### 🎯 Why Introduced in Java 8
+
+Before Java 8, adding **any** new method to an interface would break **every** existing implementing class (they'd all
+suddenly fail to compile, missing the new method). This made evolving interfaces like `List` or `Collection` in the JDK
+extremely painful.
+
+**Default methods** solved this: you can add a new method to an interface **with a body**, and all existing implementing
+classes continue to compile — they simply inherit the default behavior unless they choose to override it.
+
+### ✍️ Syntax
+
+```java
+interface Vehicle {
+    void move();
+
+    default void honk() {
+        System.out.println("Beep beep! (default horn sound)");
+    }
+}
+
+class Car implements Vehicle {
+    @Override
+    public void move() {
+        System.out.println("Car moving");
+    }
+    // honk() not overridden — uses the default
+}
+```
+
+### ✅ Benefits
+
+- Backward compatibility when evolving interfaces (this is *exactly* why Java 8 added `forEach()` to `Iterable` without
+  breaking millions of existing classes)
+- Provides sensible default behavior, reducing boilerplate in implementing classes
+- Enables a limited form of "trait-like" code reuse across unrelated classes
+
+### ⚔️ Conflict Resolution (Recap)
+
+As shown in Section 5, when two interfaces provide the same default method, the implementing class **must** override it
+and resolve manually with `InterfaceName.super.method()`.
+
+### 🏗️ Best Practices for Default Methods
+
+- Use them for **genuinely optional, sensible defaults** — not to smuggle heavy business logic into interfaces
+- Avoid deep chains of default methods calling other default methods across many interfaces — it hurts readability
+- Never use default methods to maintain **mutable state** — interfaces still can't hold instance fields
+
+---
+
+## 7️⃣ Static Methods in Interfaces
+
+### 🎯 Why Introduced
+
+Java 8 also allowed **static methods** inside interfaces — mainly to let related utility/helper logic live alongside the
+interface it supports, instead of scattering it into separate "Utils" classes (e.g., `Collections` vs `Collection`).
+
+### 📏 Rules
+
+- Must include a method body
+- Cannot be overridden by implementing classes (static methods aren't polymorphic)
+- Called using the **interface name**, not through an object reference
+
+### 📞 Invocation
+
+```java
+interface MathOperations {
+    static int square(int x) {
+        return x * x;
+    }
+}
+
+// Usage:
+int result = MathOperations.square(5); // called via interface name, NOT an object
+```
+
+### 💻 Practical Example
+
+```java
+interface Payment {
+    boolean processPayment(double amount);
+
+    static boolean isValidAmount(double amount) {
+        return amount > 0;
+    }
+}
+
+class CreditCardPayment implements Payment {
+    @Override
+    public boolean processPayment(double amount) {
+        if (!Payment.isValidAmount(amount)) {
+            System.out.println("Invalid amount!");
+            return false;
+        }
+        System.out.println("Processing ₹" + amount);
+        return true;
+    }
+}
+```
+
+---
+
+## 8️⃣ Private Methods in Interfaces (Java 9+)
+
+### 🎯 Why Introduced
+
+Once interfaces could have `default` and `static` methods with real logic, a new problem appeared: **duplicate code**
+between multiple default/static methods within the *same* interface. Java 9 introduced **private methods** to let
+interfaces share internal helper logic **without exposing it** to implementing classes.
+
+### 📏 Rules
+
+- Must include a method body (never abstract)
+- **Cannot** be overridden (not visible outside the interface at all)
+- Can be called only from `default` or other `static`/`private` methods **within the same interface**
+- Private **instance** methods (non-static) can only be called from default methods; private **static** methods can be
+  called from both default and static methods
+
+### ✅ Benefits / Internal Code Reuse
+
+```java
+interface Invoice {
+    default void printDetailedInvoice(double amount, double taxRate) {
+        double tax = calculateTax(amount, taxRate);
+        System.out.println("Amount: " + amount + ", Tax: " + tax);
+    }
+
+    default void printSimpleInvoice(double amount) {
+        double tax = calculateTax(amount, 0.05); // reusing shared private logic
+        System.out.println("Amount: " + amount + ", Default Tax: " + tax);
+    }
+
+    // private helper — hidden from implementing classes entirely
+    private double calculateTax(double amount, double rate) {
+        return amount * rate;
+    }
+}
+```
+
+> 🔑 Without private methods, `calculateTax()` would have had to be a `static` or `default` method — exposing internal
+> helper logic to every implementing class, cluttering the public contract.
+
+---
+
+## 9️⃣ Functional Interfaces
+
+### 📖 Definition
+
+> A **functional interface** is an interface with **exactly one abstract method** (regardless of how many default/static
+> methods it has). This single method is called the **Single Abstract Method (SAM)**.
+
+### 🎯 Single Abstract Method (SAM)
+
+```java
+interface Greetable {
+    void greet(String name); // exactly ONE abstract method
+
+    default void log() {
+        System.out.println("Logging greet call");
+    } // allowed — doesn't count against SAM rule
+}
+```
+
+### 🏷️ `@FunctionalInterface`
+
+```java
+
+@FunctionalInterface
+interface Greetable {
+    void greet(String name);
+}
+```
+
+This annotation is **optional** but strongly recommended — the compiler will throw an error if you accidentally add a *
+*second** abstract method, catching mistakes early.
+
+```java
+
+@FunctionalInterface
+interface Broken {
+    void method1();
+
+    void method2(); // ❌ Compile-time error: not functional, two abstract methods
+}
+```
+
+### 🎯 Why Introduced
+
+Functional interfaces exist to support **Lambda Expressions** — Java's way of treating a "block of behavior" as a value
+that can be passed around, introduced in Java 8.
+
+### 🔗 Relation to Lambda Expressions
+
+```java
+Greetable g = (name) -> System.out.println("Hello, " + name);
+g.
+
+greet("Riya"); // Output: Hello, Riya
+```
+
+The lambda `(name) -> System.out.println(...)` is essentially shorthand for implementing the interface's single abstract
+method.
+
+> 📌 **Note:** A full deep-dive into Lambda Expressions and the Stream API is **beyond the scope of this repository** —
+> this section only introduces functional interfaces as the *foundation* that lambdas are built on. We're covering them
+> here because they're a natural extension of interfaces, and interviewers commonly ask about the connection.
+
+### 📦 Built-in Functional Interfaces (Brief Introduction)
+
+| Interface       | Package              | SAM Signature           | Purpose                     |
+|-----------------|----------------------|-------------------------|-----------------------------|
+| `Runnable`      | `java.lang`          | `void run()`            | A task with no input/output |
+| `Comparable<T>` | `java.lang`          | `int compareTo(T o)`    | Natural ordering            |
+| `Comparator<T>` | `java.util`          | `int compare(T a, T b)` | Custom ordering             |
+| `Function<T,R>` | `java.util.function` | `R apply(T t)`          | Transforms input to output  |
+| `Predicate<T>`  | `java.util.function` | `boolean test(T t)`     | Boolean-valued check        |
+| `Supplier<T>`   | `java.util.function` | `T get()`               | Supplies/produces a value   |
+
+---
+
+## 🔟 Marker Interfaces
+
+### 📖 What Are They?
+
+> A **marker interface** is an interface with **no methods at all** — it exists purely to "tag" or "mark" a class as
+> having a certain property, which other code (often the JVM or a framework) checks for using `instanceof`.
+
+### 🎯 Why They Exist
+
+Before annotations existed in Java, marker interfaces were the **only** way to attach metadata to a class without adding
+real behavior.
+
+### 📚 Examples
+
+```java
+interface Serializable {
+    // completely empty — no methods
+}
+
+class Employee implements Serializable {
+    String name;
+    double salary;
+}
+```
+
+| Marker Interface | Purpose                                                             |
+|------------------|---------------------------------------------------------------------|
+| `Serializable`   | Tells the JVM this object's state can be converted to a byte stream |
+| `Cloneable`      | Tells the JVM that `Object.clone()` is allowed on this class        |
+| `Remote` (RMI)   | Marks a class as usable for remote method invocation                |
+
+### 🔄 Modern Alternatives
+
+Since Java 5, **annotations** (`@interface`) have largely replaced marker interfaces for new designs, because
+annotations can carry **additional metadata** (values, parameters) that a plain marker interface cannot:
+
+```java
+
+@Entity  // annotation — can carry metadata, unlike a marker interface
+class Employee {
+}
+```
+
+> 🔑 `Serializable` and `Cloneable` remain marker interfaces today mostly for **historical/backward-compatibility reasons
+** — if Java were designed today, these would likely be annotations instead.
+
+---
+
+## 1️⃣1️⃣ Real-World Usage
+
+### 🌱 Spring Boot
+
+Spring's entire architecture is interface-driven. You typically code against `interface UserRepository`, and Spring
+generates or injects the concrete implementation at runtime — enabling **loose coupling** and easy testing (mock the
+interface in unit tests).
+
+### 💉 Dependency Injection
+
+DI frameworks inject **interface types**, not concrete classes, into your components:
+
+```java
+class OrderService {
+    private final PaymentGateway gateway; // interface, not a concrete class
+
+    OrderService(PaymentGateway gateway) { // injected via constructor
+        this.gateway = gateway;
+    }
+}
+```
+
+Swapping `RazorpayGateway` for `StripeGateway` requires **zero changes** to `OrderService`.
+
+### 📦 Collections Framework
+
+`List`, `Set`, `Map`, `Queue` are all interfaces. Your code should almost always reference the interface type (
+`List<String> names = new ArrayList<>();`), so the underlying implementation (`ArrayList` vs `LinkedList`) can change
+without breaking calling code.
+
+### 🗄️ JDBC
+
+`Connection`, `Statement`, and `ResultSet` are all interfaces defined in `java.sql`. Each database vendor (MySQL,
+PostgreSQL, Oracle) provides its own concrete implementation — your code stays vendor-agnostic by coding against the
+interface.
+
+### 📱 Android Development
+
+`OnClickListener` is a functional interface — you implement it (often via a lambda) to define what happens when a button
+is tapped, without the Android framework needing to know your specific logic in advance.
+
+### 🏢 Enterprise Applications
+
+Layered architectures (Controller → Service → Repository) use interfaces at each layer boundary, allowing each layer to
+be mocked, tested, and swapped independently.
+
+### 🔌 API Design
+
+Public APIs/SDKs expose interfaces rather than concrete classes, so internal implementation can evolve (or be replaced
+entirely) without breaking client code that depends on the published contract.
+
+### 🎨 Design Patterns
+
+Nearly every classic design pattern relies on interfaces: **Strategy** (interchangeable algorithms), **Observer** (
+`Listener` interfaces), **Factory** (returns an interface type), **Adapter**, **Decorator** — all depend on coding
+against an abstraction rather than a concrete class.
+
+---
+
+## 1️⃣2️⃣ Best Practices
+
+### ✅ When to Choose an Interface
+
+- Unrelated classes need to share a **capability** (`Comparable`, `Flyable`)
+- You need **multiple inheritance** of type
+- You're designing a **public API/contract** that many teams/classes will implement differently
+- You want maximum flexibility for future implementations (swap `MySQL` → `PostgreSQL` easily)
+
+### ✅ When to Choose an Abstract Class
+
+- Related classes share **significant common code**, not just a signature
+- You need **constructors** to enforce initialization logic
+- You need **instance state** (fields) shared across subclasses
+
+### 🎯 Interface Segregation Principle (ISP)
+
+> *"Clients should not be forced to depend on methods they do not use."* — the "I" in **SOLID**
+
+**Bad design (fat interface):**
+
+```java
+interface Worker {
+    void code();
+
+    void design();
+
+    void manageTeam();
+}
+
+class Developer implements Worker {
+    public void code() { /* ... */ }
+
+    public void design() {
+        throw new UnsupportedOperationException();
+    } // forced, unused
+
+    public void manageTeam() {
+        throw new UnsupportedOperationException();
+    } // forced, unused
+}
+```
+
+**Good design (segregated interfaces):**
+
+```java
+interface Codeable {
+    void code();
+}
+
+interface Designable {
+    void design();
+}
+
+interface Manageable {
+    void manageTeam();
+}
+
+class Developer implements Codeable {
+    public void code() { /* ... */ }
+}
+```
+
+### 🧼 Designing Clean APIs
+
+- Keep interfaces **small and focused** (ideally one clear responsibility)
+- Prefer **many small interfaces** over one large interface
+- Document the **contract's intent**, not just method signatures
+
+### ⚠️ Avoiding Unnecessary Interfaces
+
+Don't create an interface for a class that will **only ever have one implementation** and has no testing/mocking need —
+this adds indirection without benefit. Interfaces earn their place when there's genuine variability or a need for
+decoupling.
+
+---
+
+## 1️⃣3️⃣ Common Beginner Mistakes
+
+### ❌ Mistake 1: Confusing Interfaces with Abstract Classes
+
+Beginners often ask "should I use an interface or abstract class?" as if they're interchangeable. Remember: *
+*interface = "can-do"** capability, **abstract class = "is-a"** shared identity + code.
+
+### ❌ Mistake 2: Forgetting to Implement Methods
+
+```java
+interface Payment {
+    boolean processPayment(double amount);
+}
+
+class UpiPayment implements Payment {
+    // forgot processPayment() entirely
+} // ❌ Compile-time error
+```
+
+### ❌ Mistake 3: Misusing Default Methods
+
+```java
+interface Vehicle {
+    default void move() {
+        // ❌ Bad practice: putting ALL core logic here instead of leaving it abstract
+        System.out.println("Generic movement logic for every vehicle type");
+    }
+}
+```
+
+If every vehicle type genuinely moves differently, `move()` should be **abstract**, not a one-size-fits-all `default`.
+
+### ❌ Mistake 4: Overusing Interfaces
+
+Creating an interface for every single class "just in case," even when there's only one implementation and no plan for
+more — this is **premature abstraction** and adds unnecessary indirection.
+
+---
+
+## 1️⃣4️⃣ Practice Section
+
+### 🧠 Conceptual Questions (10)
+
+1. Why can a class implement multiple interfaces but extend only one class?
+2. What is the default access modifier for interface methods and variables?
+3. Why were default methods introduced in Java 8?
+4. What is the Diamond Problem, and how does Java avoid it for interfaces?
+5. Can an interface have a constructor? Why or why not?
+6. What is a functional interface, and why does the SAM rule matter?
+7. What is a marker interface? Give two JDK examples.
+8. Why can't interface variables be reassigned?
+9. What's the difference between a private method and a default method in an interface?
+10. Why does Java prevent instantiating an interface directly?
