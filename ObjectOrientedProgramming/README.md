@@ -6836,23 +6836,7 @@ same trap as Q14.
 > **"No NEW for Half-Built Houses"** — an abstract class is like a half-built house blueprint; you can't move into it (
 `new`) until someone finishes building it (a concrete subclass).
 
-## ❓ Self-Check Questions
 
-1. Can you explain, without looking back, why abstract methods can't be `static`?
-2. Can you write an abstract class with a constructor and a static counter, from memory?
-3. Can you state the difference between abstraction and encapsulation in one sentence each?
-4. Do you understand why calling an overridable method inside a constructor is risky?
-
-## 🏆 Mini Coding Challenge
-
-> Design an abstract class `Instrument` with:
-> - A constructor accepting `String name`
-> - A concrete method `tune()` that prints `"<name> is being tuned"`
-> - An abstract method `play()`
->
-> Implement `Guitar` and `Piano`, each with a distinct `play()` message. Then write a `main` method that creates a
-`List<Instrument>` containing both, and calls `tune()` followed by `play()` on each — polymorphically, without any
-`if-else`.
 
 ---
 
