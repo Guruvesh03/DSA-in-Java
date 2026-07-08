@@ -2728,6 +2728,634 @@ interfaces are better suited for pure behavior contracts across unrelated classe
 
 ---
 
+# 📒 CHAPTER 7 — Interfaces
+
+## 7.1 Why Interfaces?
+
+### 📌 Concept
+
+A class can `extend` only one class, so abstract classes can't give unrelated types (e.g., `Bird`, `Airplane`) a shared
+capability without forcing an artificial hierarchy. Interfaces solve this by allowing **multiple inheritance of
+behavior/type**.
+
+### 🧠 Memory Trick
+
+**"Can-do, not is-a."** A `Duck` IS-A `Animal`, but CAN-DO `Flyable` and `Swimmable` — capabilities, not identity.
+
+### ⚡ Key Points
+
+- Java disallows multiple class inheritance (ambiguity risk) but allows multiple interface implementation (no shared
+  state to conflict over).
+- Pre-Java 8, interfaces were 100% abstract — pure contracts.
+- A class can `implement` many interfaces while `extending` only one class.
+
+### 🚫 Common Mistakes
+
+- Trying `class Duck extends Flyable, Swimmable` (interfaces use `implements`, not `extends`, for classes).
+
+### 🎯 Interview Perspective
+
+"Why does Java support multiple inheritance for interfaces but not classes?" → Interfaces (traditionally) carry no
+state, so there's nothing ambiguous to inherit conflicting copies of.
+
+### ❓ Top 5 Interview Questions
+
+1. **Why were interfaces introduced?** → To allow multiple inheritance of behavior without state conflicts.
+2. **Can a class implement multiple interfaces?** → Yes.
+3. **Can a class extend multiple classes?** → No.
+4. **What keyword connects a class to an interface?** → `implements`.
+5. **Give a real-world "can-do" example.** → Duck implements Flyable and Swimmable.
+
+### 📝 Revision Checklist
+
+☐ I understand "can-do" vs "is-a."
+☐ I know why multiple interface inheritance is safe.
+☐ I can write a class implementing 2+ interfaces.
+
+---
+
+## 7.2 What is an Interface?
+
+### 📌 Concept
+
+A reference type defining a contract — abstract methods (implicitly `public abstract`), plus default/static/private
+methods (Java 8/9+), and constants (`public static final`). No instance state, no constructors, cannot be instantiated.
+
+### 🧠 Memory Trick
+
+**Interface members are ALWAYS `public`.** Variables are ALWAYS `public static final` (constants).
+
+### ⚡ Key Points
+
+| Feature            | Supported?                     |
+|--------------------|--------------------------------|
+| Abstract methods   | ✅ (implicitly public abstract) |
+| Default methods    | ✅ Java 8+                      |
+| Static methods     | ✅ Java 8+                      |
+| Private methods    | ✅ Java 9+                      |
+| Instance variables | ❌ Never                        |
+| Constructors       | ❌ Never                        |
+
+- An interface can `extend` multiple other interfaces (unlike classes).
+- Naming convention: adjectives like `Runnable`, `Comparable` — avoid the `I` prefix (not idiomatic Java).
+
+### 🚫 Common Mistakes
+
+- Trying to add an instance field to an interface — always becomes `public static final` automatically, can't be
+  reassigned.
+- Forgetting `public` when implementing an interface method (interface methods can't be narrowed).
+
+### 🎯 Interview Perspective
+
+"Are interface variables mutable?" → No — implicitly `public static final`, so they're constants.
+
+### ❓ Top 5 Interview Questions
+
+1. **What access modifier do interface methods have by default?** → `public abstract`.
+2. **What about interface variables?** → `public static final` (constants).
+3. **Can interfaces have constructors?** → No.
+4. **Can an interface extend multiple interfaces?** → Yes.
+5. **Can you instantiate an interface directly?** → No.
+
+### 📝 Revision Checklist
+
+☐ I know the default modifiers for interface methods and variables.
+☐ I know interfaces can extend multiple other interfaces.
+☐ I know interfaces can never hold instance state.
+
+---
+
+## 7.3 Implementing Interfaces
+
+### 📌 Concept
+
+A class uses `implements` to fulfill an interface's contract. It must implement ALL abstract methods (marked `public`)
+unless the class itself is abstract. A class can implement multiple interfaces at once.
+
+### 🧠 Memory Trick
+
+**"Implementing = signing the contract — you must deliver on EVERY clause."**
+
+### ⚡ Key Points
+
+- Overriding methods must be marked `public` explicitly (interface methods are always public).
+- `class Smartphone implements Chargeable, Connectable { ... }` — multiple interfaces, comma-separated.
+- An abstract class implementing an interface may leave methods unimplemented, deferring to its own subclasses.
+
+### 🚫 Common Mistakes
+
+- Forgetting `public` when overriding an interface method.
+- Forgetting to implement even one abstract method (compile error).
+
+### 🎯 Interview Perspective
+
+"Can an abstract class implementing an interface skip implementing its methods?" → Yes — legally, if the abstract class
+defers implementation to its own subclasses.
+
+### ❓ Top 5 Interview Questions
+
+1. **What keyword implements an interface?** → `implements`.
+2. **Must overriding methods be marked `public`?** → Yes, always.
+3. **Can a class implement multiple interfaces?** → Yes.
+4. **What happens if you don't implement all abstract methods?** → Compile error, unless the class is abstract.
+5. **Can an abstract class implementing an interface skip method implementations?** → Yes, legally.
+
+### 📝 Revision Checklist
+
+☐ I always remember `public` when overriding interface methods.
+☐ I can implement multiple interfaces in one class.
+☐ I know the abstract-class-implementing-interface exception.
+
+---
+
+## 7.4 Interface vs Abstract Class
+
+### 📌 Concept
+
+Interface = pure capability contract, multiple inheritance allowed, no instance state/constructors. Abstract class =
+partial implementation for related types, single inheritance, can hold state and constructors.
+
+### 🧠 Memory Trick
+
+**"Interface = CAN-DO. Abstract class = IS-A."**
+
+### ⚡ Key Points
+
+| Aspect               | Interface                             | Abstract Class                    |
+|----------------------|---------------------------------------|-----------------------------------|
+| Multiple inheritance | ✅ Yes                                 | ❌ No                              |
+| Constructors         | ❌ No                                  | ✅ Yes                             |
+| Instance variables   | ❌ No                                  | ✅ Yes                             |
+| Methods              | Abstract + default + static + private | Abstract + concrete, freely mixed |
+| Design philosophy    | "Can-do"                              | "Is-a"                            |
+
+- Post-Java 8, "interfaces are 100% abstract" is **outdated** — the real distinction is about **state** (no instance
+  fields) and **inheritance model** (multiple vs single).
+
+### 🚫 Common Mistakes
+
+- Repeating the old "interfaces are 100% abstract" line without acknowledging default/static/private methods exist now.
+
+### 🎯 Interview Perspective
+
+Give the MODERN answer: the real difference is state + multiple inheritance, not "abstract vs concrete methods" anymore.
+
+### ❓ Top 5 Interview Questions
+
+1. **Can interfaces have constructors?** → No.
+2. **Can abstract classes support multiple inheritance?** → No, only interfaces can.
+3. **Is "interfaces are 100% abstract" still fully true?** → No — outdated since Java 8's default/static methods.
+4. **What's the REAL modern distinction?** → State (interfaces can't hold instance fields) + inheritance model.
+5. **When would you use both together?** → Interface for the public contract, abstract class for shared boilerplate
+   implementation.
+
+### 📝 Revision Checklist
+
+☐ I know the full comparison table cold.
+☐ I give the MODERN (post-Java 8) answer, not the outdated one.
+☐ I can explain when both are used together.
+
+---
+
+## 7.5 Multiple Inheritance & the Diamond Problem
+
+### 📌 Concept
+
+A class can implement many interfaces safely because interfaces (pre-Java 8) had no state to conflict over. But if two
+interfaces provide **conflicting default methods** with the same signature, Java forces the implementing class to
+explicitly resolve it — the Diamond Problem, solved by requiring explicit choice.
+
+### 🧠 Memory Trick
+
+**"Classes always win. Conflicting defaults must be resolved by hand — Java never guesses."**
+
+### ⚡ Key Points
+
+- Conflict resolution: `InterfaceName.super.methodName()` inside the overriding method.
+- Method resolution rules: (1) Class concrete method always beats interface default. (2) More specific interface wins if
+  one extends the other. (3) Direct conflicts require manual resolution.
+- `class C implements A, B` where both have conflicting `default greet()` → compile error unless `C` overrides `greet()`
+  itself.
+
+### 🚫 Common Mistakes
+
+- Assuming Java auto-picks one default method when two interfaces conflict — it doesn't; it's a compile error until
+  resolved.
+
+### 🎯 Interview Perspective
+
+"How does Java resolve the Diamond Problem for interfaces?" → It doesn't automatically — forces explicit resolution via
+`InterfaceName.super.method()`.
+
+### ❓ Top 5 Interview Questions
+
+1. **What is the Diamond Problem?** → Conflicting method implementations inherited from 2+ parents.
+2. **Does Java auto-resolve conflicting default methods?** → No — compile error until manually resolved.
+3. **How do you resolve it?** → `InterfaceName.super.methodName()`.
+4. **Who wins: a class's concrete method or an interface's default?** → The class's concrete method, always.
+5. **What if interface B extends A and overrides a default method?** → B's more specific version wins.
+
+### 📝 Revision Checklist
+
+☐ I can write the `InterfaceName.super.method()` resolution syntax.
+☐ I know the 3 method resolution rules in order.
+☐ I know "class always wins over interface default."
+
+---
+
+## 7.6 Default Methods
+
+### 📌 Concept
+
+Introduced in Java 8 to let interfaces add new methods **with a body**, without breaking existing implementing classes —
+solving the "can't evolve interfaces" problem that plagued pre-Java-8 code.
+
+### 🧠 Memory Trick
+
+**"Default = backward-compatible evolution."** Adding `forEach()` to `Iterable` didn't break millions of existing
+classes.
+
+### ⚡ Key Points
+
+- Syntax: `default void honk() { ... }` inside an interface.
+- Implementing classes can use the default as-is, or override it.
+- Best practice: only for genuinely optional, sensible defaults — not for smuggling heavy business logic into
+  interfaces.
+
+### 🚫 Common Mistakes
+
+- Putting ALL core logic into a default method when every implementer needs genuinely different behavior (should be
+  abstract instead).
+
+### 🎯 Interview Perspective
+
+"Why were default methods introduced?" → To evolve interfaces without breaking existing implementations.
+
+### ❓ Top 5 Interview Questions
+
+1. **Why were default methods introduced?** → To add new interface methods without breaking existing implementers.
+2. **What keyword marks one?** → `default`.
+3. **Can implementing classes override a default method?** → Yes.
+4. **Can default methods be overridden?** → Yes, freely.
+5. **When should you NOT use a default method?** → When every implementer needs genuinely different, non-optional
+   behavior.
+
+### 📝 Revision Checklist
+
+☐ I know exactly why Java 8 added default methods.
+☐ I can write correct default method syntax.
+☐ I know when default vs abstract is the right choice.
+
+---
+
+## 7.7 Static Methods in Interfaces
+
+### 📌 Concept
+
+Java 8 allowed `static` methods in interfaces for related utility logic, called via the **interface name** (never
+through an object reference), and cannot be overridden by implementing classes.
+
+### 🧠 Memory Trick
+
+**"Static in interface = utility bolted onto the concept, not the object."**
+
+### ⚡ Key Points
+
+- Must have a body.
+- Called as `InterfaceName.methodName()`, e.g., `Payment.isValidAmount(amount)`.
+- Not inherited/overridable by implementing classes — belongs strictly to the interface itself.
+
+### 🚫 Common Mistakes
+
+- Trying to call a static interface method through an object reference instead of the interface name.
+
+### 🎯 Interview Perspective
+
+"Can a static interface method be overridden?" → No — not polymorphic, belongs to the interface, not any instance.
+
+### ❓ Top 5 Interview Questions
+
+1. **When were static interface methods introduced?** → Java 8.
+2. **How do you call one?** → Via the interface name, e.g. `MathOperations.square(5)`.
+3. **Can they be overridden?** → No.
+4. **Why were they added?** → To keep utility logic tied to the interface it supports.
+5. **Are they inherited by implementing classes?** → No.
+
+### 📝 Revision Checklist
+
+☐ I know the correct invocation syntax.
+☐ I know static interface methods aren't overridable/inherited.
+☐ I can explain their purpose (utility logic).
+
+---
+
+## 7.8 Private Methods in Interfaces (Java 9+)
+
+### 📌 Concept
+
+Java 9 added `private` methods to interfaces so default/static methods within the SAME interface could share internal
+helper logic, without exposing that logic to implementing classes.
+
+### 🧠 Memory Trick
+
+**"Private interface methods = backstage helpers, invisible to the audience (implementers)."**
+
+### ⚡ Key Points
+
+- Must always have a body (never abstract).
+- Cannot be overridden — invisible outside the interface entirely.
+- Private instance methods callable only from default methods; private static methods callable from default AND static
+  methods.
+
+### 🚫 Common Mistakes
+
+- Forgetting private methods are the ONLY way (pre-9, there was none) to share internal logic between default methods
+  without exposing it publicly.
+
+### 🎯 Interview Perspective
+
+"Why were private interface methods added?" → To let default/static methods share helper logic without polluting the
+public contract.
+
+### ❓ Top 5 Interview Questions
+
+1. **When were private interface methods introduced?** → Java 9.
+2. **Can they be abstract?** → No, always have a body.
+3. **Who can call a private instance method?** → Only default methods in the same interface.
+4. **Who can call a private static method?** → Default and static methods in the same interface.
+5. **What problem do they solve?** → Duplicate logic across multiple default/static methods.
+
+### 📝 Revision Checklist
+
+☐ I know why Java 9 added private interface methods.
+☐ I know the calling rules (instance vs static).
+☐ I can write a private helper method used by two default methods.
+
+---
+
+## 7.9 Functional Interfaces
+
+### 📌 Concept
+
+An interface with exactly **one abstract method** (SAM — Single Abstract Method), regardless of how many default/static
+methods it has. Enables **lambda expressions**. `@FunctionalInterface` is an optional but recommended compiler check.
+
+### 🧠 Memory Trick
+
+**SAM = "one job to do."** Lambdas are just shorthand for implementing that one job.
+
+### ⚡ Key Points
+
+- `@FunctionalInterface` catches accidental 2nd abstract methods at compile-time.
+- Default/static methods DON'T count toward the SAM rule.
+- Built-in examples: `Runnable`, `Comparable<T>`, `Comparator<T>`, `Function<T,R>`, `Predicate<T>`, `Supplier<T>`.
+- Full lambda expression syntax/Streams are beyond this repo's scope — just know the SAM connection.
+
+### 🚫 Common Mistakes
+
+- Adding a second abstract method to a functional interface (breaks the SAM rule, caught by `@FunctionalInterface`).
+
+### 🎯 Interview Perspective
+
+"What's the relationship between functional interfaces and lambdas?" → A lambda is shorthand for implementing a
+functional interface's single abstract method.
+
+### ❓ Top 5 Interview Questions
+
+1. **What is a functional interface?** → An interface with exactly one abstract method.
+2. **What does `@FunctionalInterface` do?** → Compiler check to catch accidental extra abstract methods.
+3. **Do default methods count toward the SAM rule?** → No.
+4. **Name a built-in functional interface.** → `Runnable`, `Comparable`, `Function`, etc.
+5. **What do lambdas relate to?** → They implement a functional interface's single abstract method.
+
+### 📝 Revision Checklist
+
+☐ I know the SAM rule precisely.
+☐ I know default/static methods don't break SAM.
+☐ I can name 3+ built-in functional interfaces.
+
+---
+
+## 7.10 Marker Interfaces
+
+### 📌 Concept
+
+An interface with **no methods at all** — exists purely to "tag" a class with a property, checked via `instanceof`.
+Examples: `Serializable`, `Cloneable`. Mostly replaced today by annotations.
+
+### 🧠 Memory Trick
+
+**"Marker = empty label stuck on a class."** No behavior, just a flag.
+
+### ⚡ Key Points
+
+- Before annotations existed, this was the ONLY way to tag metadata onto a class.
+- `Serializable`/`Cloneable` remain marker interfaces mostly for historical/backward-compatibility reasons.
+- Annotations (`@interface`) replaced marker interfaces for new designs since they can carry structured metadata (
+  values), not just yes/no.
+
+### 🚫 Common Mistakes
+
+- Designing NEW marker interfaces today instead of using annotations (outdated approach for new code).
+
+### 🎯 Interview Perspective
+
+"Why aren't marker interfaces common in new Java code?" → Annotations can carry actual metadata (values); marker
+interfaces can only signal yes/no.
+
+### ❓ Top 5 Interview Questions
+
+1. **What is a marker interface?** → An interface with no methods, used purely to tag a class.
+2. **Name two JDK marker interfaces.** → `Serializable`, `Cloneable`.
+3. **What replaced marker interfaces for new designs?** → Annotations.
+4. **Why does `Serializable` remain a marker interface?** → Historical/backward-compatibility reasons.
+5. **How is a marker interface checked?** → Via `instanceof`.
+
+### 📝 Revision Checklist
+
+☐ I can name 2+ JDK marker interfaces.
+☐ I know why annotations replaced them for new code.
+☐ I understand how `instanceof` checks a marker interface.
+
+---
+
+## 7.11 Real-World Usage & Best Practices
+
+### 📌 Concept
+
+Interfaces power Spring Boot (interface-driven DI), the Collections Framework (`List`, `Map`), JDBC (`Connection`,
+`Statement`), Android (`OnClickListener`), and most design patterns (Strategy, Observer, Factory). Follow the *
+*Interface Segregation Principle**: keep interfaces small and focused.
+
+### 🧠 Memory Trick
+
+**ISP: "Don't force a Developer to implement `design()` and `manageTeam()` just because they're in the same fat `Worker`
+interface."**
+
+### ⚡ Key Points
+
+- Choose interface: unrelated classes need a capability, multiple inheritance needed, or designing a public API.
+- Choose abstract class: related classes share significant code, need constructors/state.
+- ISP: prefer many small interfaces over one large one.
+- Avoid creating interfaces for classes that will only ever have ONE implementation with no testing need — premature
+  abstraction.
+
+### 🚫 Common Mistakes
+
+- Fat interfaces forcing unrelated methods on implementers (violates ISP).
+- Overusing interfaces "just in case" with no real variability need.
+
+### 🎯 Interview Perspective
+
+"Where have you seen interfaces used in a real framework?" → Spring Boot's Dependency Injection and the Collections
+Framework are the strongest, most recognizable answers.
+
+### ❓ Top 5 Interview Questions
+
+1. **What is the Interface Segregation Principle?** → Clients shouldn't be forced to depend on methods they don't use.
+2. **Name a real framework example.** → Spring Boot DI, or Collections Framework (`List`/`Map`).
+3. **When should you avoid creating an interface?** → When there's only one implementation and no need for
+   flexibility/testing.
+4. **What design patterns rely on interfaces?** → Strategy, Observer, Factory, Adapter, Decorator.
+5. **Why does Spring inject interface types, not concrete classes?** → Enables loose coupling and easy testing/mocking.
+
+### 📝 Revision Checklist
+
+☐ I can state the ISP definition and give a bad-vs-good example.
+☐ I can name 3+ real-world interface usages.
+☐ I know when NOT to create an interface.
+
+---
+
+## 📄 Chapter 7 — One-Page Revision
+
+- Interfaces solve the multiple-inheritance-of-behavior problem abstract classes can't (single class inheritance limit).
+- Interface methods: implicitly `public abstract` (or default/static Java8+/private Java9+). Variables: implicitly
+  `public static final`.
+- `implements` connects a class to an interface; overriding methods must be `public`.
+- Interface vs Abstract Class: CAN-DO (interface, multi-inherit, no state/constructors) vs IS-A (abstract class,
+  single-inherit, has state/constructors).
+- Diamond Problem for interfaces: Java forces explicit resolution via `InterfaceName.super.method()`; class methods
+  always beat interface defaults.
+- Default methods (Java 8): evolve interfaces without breaking implementers.
+- Static methods (Java 8): utility logic, called via interface name, never overridden.
+- Private methods (Java 9): internal helper logic shared between default/static methods, hidden from implementers.
+- Functional interfaces: exactly ONE abstract method (SAM) → powers lambda expressions.
+- Marker interfaces: no methods, pure tag (`Serializable`, `Cloneable`) — mostly replaced by annotations today.
+- Real-world: Spring Boot DI, Collections Framework, JDBC, Android callbacks, design patterns.
+
+## 🔥 Rapid Fire (Chapter 7)
+
+1. Why can a class implement multiple interfaces but extend only one class?
+2. What's the default access modifier for interface methods? For variables?
+3. What is the Diamond Problem for interfaces, and how is it resolved?
+4. Why were default methods introduced in Java 8?
+5. Why were private interface methods introduced in Java 9?
+6. What is a functional interface (SAM rule)?
+7. What is a marker interface? Give 2 examples.
+8. Is "interfaces are 100% abstract" still fully true today?
+9. What always wins: a class's concrete method or an interface's default method?
+10. What is the Interface Segregation Principle?
+
+## ⚡ Must Remember (Chapter 7)
+
+1. Interface methods = `public abstract` by default; variables = `public static final`.
+2. A class can implement MANY interfaces, extend only ONE class.
+3. Class concrete methods ALWAYS beat interface default methods in conflicts.
+4. Conflicting defaults require manual resolution: `InterfaceName.super.method()`.
+5. Default methods (Java 8) evolve interfaces without breaking old code.
+6. Static interface methods are called via interface name, never overridden.
+7. Private interface methods (Java 9) share internal helper logic, hidden from implementers.
+8. Functional interface = exactly ONE abstract method (SAM) → powers lambdas.
+9. Marker interfaces have zero methods — mostly replaced by annotations now.
+10. Interfaces can never hold instance state or have constructors.
+
+## 🎤 Interview Rapid Revision (30–60 sec)
+
+*"Interfaces solve the problem that a class can extend only one class, by allowing multiple inheritance of behavior — a
+class can implement any number of interfaces. Interface methods are implicitly public abstract, and variables are
+implicitly public static final constants. Since Java 8, interfaces can also have default methods with a body for
+backward-compatible evolution, and static utility methods called via the interface name; Java 9 added private methods
+for internal helper logic. If two interfaces provide conflicting default methods, Java forces explicit resolution via
+InterfaceName.super.method() rather than guessing — and a class's own concrete method always wins over any interface
+default. A functional interface has exactly one abstract method, which is what makes lambda expressions possible. The
+modern distinction from abstract classes isn't about abstract versus concrete methods anymore — it's that interfaces can
+never hold instance state or constructors, while abstract classes can."*
+
+---
+
+# 🎯 CHEAT SHEET ADDENDUM (Chapter 7)
+
+## 🔑 Keywords Quick Reference
+
+| Keyword/Concept                | One-Liner                                                              |
+|--------------------------------|------------------------------------------------------------------------|
+| `interface`                    | Pure capability contract; multiple inheritance allowed                 |
+| `implements`                   | Connects a class to an interface's contract                            |
+| abstract method (in interface) | Implicitly `public abstract`                                           |
+| interface variable             | Implicitly `public static final` (constant)                            |
+| `default` method               | Java 8+; adds a body, evolves interfaces without breaking implementers |
+| `static` method (interface)    | Java 8+; called via interface name, never overridden                   |
+| `private` method (interface)   | Java 9+; internal helper, hidden from implementers                     |
+| `@FunctionalInterface`         | Compiler check enforcing exactly one abstract method (SAM)             |
+| Marker interface               | Zero methods, pure tag (e.g., `Serializable`, `Cloneable`)             |
+| `InterfaceName.super.method()` | Manually resolves a Diamond Problem conflict                           |
+
+## ⚖️ The Big Confusions — Resolved
+
+| Confusion                                               | Resolution                                                                                                              |
+|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| **Interface vs Abstract Class**                         | Interface = CAN-DO, multi-inherit, no state/constructors. Abstract Class = IS-A, single-inherit, has state/constructors |
+| **"Interfaces are 100% abstract"**                      | Outdated since Java 8 — default/static methods add real bodies                                                          |
+| **Class method vs interface default (conflict)**        | Class's own concrete method ALWAYS wins                                                                                 |
+| **Two conflicting interface defaults**                  | NOT auto-resolved — compile error until you manually resolve with `InterfaceName.super.method()`                        |
+| **Marker interface vs annotation**                      | Marker interface = old-style empty tag; annotation = modern, can carry metadata/values                                  |
+| **Functional interface vs any interface with 1 method** | Functional interface specifically = exactly ONE abstract method (default/static methods don't count)                    |
+
+## 🧠 Frequently Forgotten Facts
+
+- Interface methods must be marked `public` explicitly when overridden — Java never lets you narrow visibility.
+- Interface variables are always `public static final` — you cannot reassign them, even without writing `final`
+  yourself.
+- An interface CAN extend multiple other interfaces (`interface C extends A, B` is legal) — only classes are limited to
+  single inheritance.
+- Private interface methods (Java 9+) can NEVER be abstract — they must always have a body since they're invisible
+  outside the interface anyway.
+- A class implementing an interface can remain `abstract` and defer implementing the interface's methods to its own
+  subclasses — perfectly legal.
+- `Runnable`, `Comparable`, `Comparator`, `Function`, `Predicate`, and `Supplier` are all functional interfaces you
+  should recognize by name instantly.
+
+## 🌀 Quick-Fix: Diamond Problem Resolution
+
+```
+interface A { default void greet(){ System.out.println("A"); } }
+interface B { default void greet(){ System.out.println("B"); } }
+
+class C implements A, B {
+    public void greet() {
+        A.super.greet();   // explicitly choose A's version
+        B.super.greet();   // or blend in B's version too
+        System.out.println("C (resolved)");
+    }
+}
+```
+
+**Rule order:** Class's own concrete method wins > more specific interface (if B extends A) wins > otherwise, MUST
+resolve manually.
+
+## 🏁 Final 60-Second Recap (Chapter 7)
+
+*"Interfaces solve the problem that a class can extend only one class, by allowing multiple inheritance of behavior — a
+class can implement any number of interfaces. Interface methods are implicitly public abstract, and variables are
+implicitly public static final constants. Since Java 8, interfaces can also have default methods with a body for
+backward-compatible evolution, and static utility methods called via the interface name; Java 9 added private methods
+for internal helper logic shared between them. If two interfaces provide conflicting default methods, Java forces
+explicit resolution via InterfaceName.super.method() rather than guessing — and a class's own concrete method always
+wins over any interface default. A functional interface has exactly one abstract method, which is what makes lambda
+expressions possible, and marker interfaces like Serializable and Cloneable use zero methods purely as tags, mostly
+replaced today by annotations. The modern distinction from abstract classes isn't about abstract versus concrete methods
+anymore — it's that interfaces can never hold instance state or constructors, while abstract classes can."*
 
 ---
 
